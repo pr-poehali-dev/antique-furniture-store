@@ -229,8 +229,12 @@ const Index = () => {
                 </div>
               </div>
               <div className="relative">
-                <div className="aspect-square rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                  <div className="text-9xl">🏺</div>
+                <div className="aspect-square rounded-lg overflow-hidden border-2 border-primary/20">
+                  <img 
+                    src="https://cdn.poehali.dev/files/478a911a-d0b3-4dde-ba70-1be8f4dd3d6b.jpg" 
+                    alt="Интерьер салона Архив № 8" 
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
             </div>
