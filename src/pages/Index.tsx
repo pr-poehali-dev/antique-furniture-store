@@ -67,7 +67,7 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="text-2xl">🏮</div>
-              <h1 className="text-2xl font-serif font-bold text-primary">Antique Chinoiserie</h1>
+              <h1 className="text-2xl font-serif font-bold text-primary">Архив № 8</h1>
             </div>
             <div className="hidden md:flex items-center gap-8">
               <button
@@ -329,7 +329,7 @@ const Index = () => {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="text-2xl">🏮</div>
-                <h3 className="text-xl font-serif font-bold">Antique Chinoiserie</h3>
+                <h3 className="text-xl font-serif font-bold">Архив № 8</h3>
               </div>
               <p className="text-primary-foreground/80 font-body">
                 Изысканная антикварная мебель для истинных ценителей
@@ -360,7 +360,7 @@ const Index = () => {
           </div>
           <Separator className="bg-primary-foreground/20 mb-8" />
           <div className="text-center text-primary-foreground/60 font-body">
-            © 2025 Antique Chinoiserie. Все права защищены.
+            © 2025 Архив № 8. Все права защищены.
           </div>
         </div>
       </footer>
