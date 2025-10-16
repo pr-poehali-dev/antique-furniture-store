@@ -245,40 +245,40 @@ const Index = () => {
         <section id="services" className="py-24 bg-background">
           <div className="container mx-auto px-6">
             <div className="text-center mb-16 animate-fade-in">
-              <div className="text-4xl mb-4">🔧</div>
-              <h2 className="text-4xl font-serif font-bold text-primary mb-4">Наши услуги</h2>
+              <div className="text-4xl mb-4">🚚</div>
+              <h2 className="text-4xl font-serif font-bold text-primary mb-4">Доставка и оплата</h2>
               <p className="text-lg text-muted-foreground font-body max-w-2xl mx-auto">
-                Полный спектр услуг для коллекционеров и ценителей антиквариата
+                Удобные условия покупки и доставки антикварной мебели
               </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
               <Card className="border-2 border-border hover:border-primary transition-all hover:shadow-xl">
                 <CardContent className="p-8 text-center">
-                  <div className="text-5xl mb-4">🔍</div>
-                  <h3 className="text-2xl font-serif font-semibold mb-4 text-foreground">Экспертиза</h3>
+                  <div className="text-5xl mb-4">🛒</div>
+                  <h3 className="text-2xl font-serif font-semibold mb-4 text-foreground">Оформление</h3>
                   <p className="text-muted-foreground font-body">
-                    Профессиональная оценка и подтверждение подлинности антикварных предметов
+                    Простое оформление заказа онлайн или в нашем салоне
                   </p>
                 </CardContent>
               </Card>
 
               <Card className="border-2 border-border hover:border-primary transition-all hover:shadow-xl">
                 <CardContent className="p-8 text-center">
-                  <div className="text-5xl mb-4">🛠️</div>
+                  <div className="text-5xl mb-4">💳</div>
+                  <h3 className="text-2xl font-serif font-semibold mb-4 text-foreground">Оплата</h3>
+                  <p className="text-muted-foreground font-body">
+                    Наличный и безналичный расчет, оплата картой
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-2 border-border hover:border-primary transition-all hover:shadow-xl">
+                <CardContent className="p-8 text-center">
+                  <div className="text-5xl mb-4">🚛</div>
                   <h3 className="text-2xl font-serif font-semibold mb-4 text-foreground">Доставка</h3>
                   <p className="text-muted-foreground font-body">
-                    Бережная транспортировка и установка с соблюдением всех мер безопасности
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-2 border-border hover:border-primary transition-all hover:shadow-xl">
-                <CardContent className="p-8 text-center">
-                  <div className="text-5xl mb-4">💎</div>
-                  <h3 className="text-2xl font-serif font-semibold mb-4 text-foreground">Консультации</h3>
-                  <p className="text-muted-foreground font-body">
-                    Помощь в подборе предметов и формировании коллекции
+                    Бережная доставка по Москве и России
                   </p>
                 </CardContent>
               </Card>
@@ -292,7 +292,7 @@ const Index = () => {
               <div className="text-4xl mb-4">📞</div>
               <h2 className="text-4xl font-serif font-bold text-primary mb-6">Контакты</h2>
               <p className="text-lg text-muted-foreground mb-8 font-body">
-                Приглашаем вас посетить наш салон или связаться с нами для консультации
+                Посетите наш салон или свяжитесь с нами для оформления заказа
               </p>
 
               <div className="space-y-6 mb-8">
@@ -315,8 +315,8 @@ const Index = () => {
               </div>
 
               <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                Записаться на просмотр
-                <Icon name="Calendar" className="ml-2" size={20} />
+                Связаться с нами
+                <Icon name="MessageCircle" className="ml-2" size={20} />
               </Button>
             </div>
           </div>
