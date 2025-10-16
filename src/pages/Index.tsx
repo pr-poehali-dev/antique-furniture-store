@@ -65,8 +65,8 @@ const Index = () => {
       <header className="fixed top-0 w-full bg-background/95 backdrop-blur-sm z-50 border-b border-border">
         <nav className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="text-2xl">🏮</div>
+            <div className="flex items-center gap-3">
+              <img src="https://cdn.poehali.dev/files/ccc90108-47ab-47f1-b51f-7911680824cf.jpg" alt="Архив № 8" className="h-12 w-12 object-contain" />
               <h1 className="text-2xl font-serif font-bold text-primary">Архив № 8</h1>
             </div>
             <div className="hidden md:flex items-center gap-8">
@@ -107,19 +107,14 @@ const Index = () => {
 
       <main className="pt-16">
         <section id="home" className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background overflow-hidden">
-          <div className="absolute inset-0 opacity-5">
-            <div className="absolute top-20 left-10 text-9xl">🏮</div>
-            <div className="absolute bottom-20 right-10 text-9xl">🌸</div>
-            <div className="absolute top-1/2 left-1/4 text-7xl">🎋</div>
-          </div>
           
           <div className="container mx-auto px-6 text-center relative z-10 animate-fade-in">
-            <div className="text-6xl mb-8">☯️</div>
+            <img src="https://cdn.poehali.dev/files/ccc90108-47ab-47f1-b51f-7911680824cf.jpg" alt="Архив № 8" className="h-40 w-40 mx-auto mb-8 object-contain" />
             <h2 className="text-5xl md:text-7xl font-serif font-bold text-primary mb-6 animate-scale-in">
-              Антикварная мебель
+              Архив № 8
             </h2>
             <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto font-body">
-              Изысканные предметы в стиле шинуазри для вашего дома
+              Вещи с историей
             </p>
             <Button 
               size="lg" 
@@ -328,11 +323,11 @@ const Index = () => {
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="text-2xl">🏮</div>
+                <img src="https://cdn.poehali.dev/files/ccc90108-47ab-47f1-b51f-7911680824cf.jpg" alt="Архив № 8" className="h-8 w-8 object-contain" />
                 <h3 className="text-xl font-serif font-bold">Архив № 8</h3>
               </div>
               <p className="text-primary-foreground/80 font-body">
-                Изысканная антикварная мебель для истинных ценителей
+                Вещи с историей
               </p>
             </div>
             <div>
