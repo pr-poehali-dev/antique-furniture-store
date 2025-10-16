@@ -12,8 +12,23 @@ interface Product {
   period: string;
 }
 
+interface Category {
+  id: string;
+  name: string;
+  icon: string;
+}
+
 const Index = () => {
   const [activeSection, setActiveSection] = useState('home');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+
+  const categories: Category[] = [
+    { id: 'all', name: 'Все категории', icon: 'Grid' },
+    { id: 'sets', name: 'Гарнитуры и комплекты', icon: 'Sofa' },
+    { id: 'storage', name: 'Комоды, сундуки, тумбы', icon: 'Box' },
+    { id: 'mirrors', name: 'Зеркала, ширмы', icon: 'Square' },
+    { id: 'tables', name: 'Столы, консоли', icon: 'Table' }
+  ];
 
   const products: Product[] = [
     {
@@ -122,11 +137,25 @@ const Index = () => {
             <div className="text-center mb-16 animate-fade-in">
               <div className="text-4xl mb-4">✨</div>
               <h2 className="text-4xl md:text-5xl font-serif font-bold text-primary mb-4">
-                Избранные предметы
+                Каталог антиквариата
               </h2>
               <p className="text-lg text-muted-foreground font-body max-w-2xl mx-auto">
                 Каждый предмет в нашей коллекции — это уникальное произведение искусства
               </p>
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-4 mb-12">
+              {categories.map((category) => (
+                <Button
+                  key={category.id}
+                  variant={selectedCategory === category.id ? 'default' : 'outline'}
+                  onClick={() => setSelectedCategory(category.id)}
+                  className="transition-all"
+                >
+                  <Icon name={category.icon} className="mr-2" size={18} />
+                  {category.name}
+                </Button>
+              ))}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
