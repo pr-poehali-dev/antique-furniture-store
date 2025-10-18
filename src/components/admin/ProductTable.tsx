@@ -66,11 +66,14 @@ const ProductTable = ({ products, onEdit, onDelete, onBulkDelete }: ProductTable
           <table className="w-full">
             <thead>
               <tr className="border-b">
-                <th className="text-left p-3 w-12">
-                  <Checkbox
-                    checked={selectedIds.length === products.length && products.length > 0}
-                    onCheckedChange={toggleSelectAll}
-                  />
+                <th className="text-left p-3">
+                  <div className="flex items-center gap-2">
+                    <Checkbox
+                      checked={selectedIds.length === products.length && products.length > 0}
+                      onCheckedChange={toggleSelectAll}
+                    />
+                    <span className="text-sm font-normal whitespace-nowrap">Выбрать все</span>
+                  </div>
                 </th>
                 <th className="text-left p-3">Фото</th>
                 <th className="text-left p-3">Артикул</th>
