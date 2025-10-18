@@ -62,46 +62,52 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
-      <header className="fixed top-0 w-full bg-background/95 backdrop-blur-sm z-50 border-b border-border">
-        <nav className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <img src="https://cdn.poehali.dev/files/abd9cfe2-f31a-443d-bc01-bea3c9be053a.png" alt="Архив № 8" className="h-32 w-32 object-contain" />
+      <header className="fixed top-0 w-full z-50 border-b border-primary/30" style={{ backgroundImage: 'url(https://cdn.poehali.dev/projects/56ebf005-4988-4a0c-b185-3a027ae2f02a/files/d1331506-d80a-410c-bef0-f2011b114ab6.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div className="bg-background/85 backdrop-blur-sm">
+          <nav className="container mx-auto px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <img src="https://cdn.poehali.dev/files/abd9cfe2-f31a-443d-bc01-bea3c9be053a.png" alt="Архив № 8" className="h-32 w-32 object-contain" />
+              </div>
+              <div className="hidden md:flex items-center gap-2">
+                <button
+                  onClick={() => scrollToSection('home')}
+                  className={`text-base px-4 py-2 transition-colors ${activeSection === 'home' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
+                >
+                  Главная
+                </button>
+                <div className="h-6 w-px bg-gradient-to-b from-transparent via-primary to-transparent"></div>
+                <button
+                  onClick={() => scrollToSection('catalog')}
+                  className={`text-base px-4 py-2 transition-colors ${activeSection === 'catalog' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
+                >
+                  Каталог
+                </button>
+                <div className="h-6 w-px bg-gradient-to-b from-transparent via-primary to-transparent"></div>
+                <button
+                  onClick={() => scrollToSection('about')}
+                  className={`text-base px-4 py-2 transition-colors ${activeSection === 'about' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
+                >
+                  О нас
+                </button>
+                <div className="h-6 w-px bg-gradient-to-b from-transparent via-primary to-transparent"></div>
+                <button
+                  onClick={() => scrollToSection('services')}
+                  className={`text-base px-4 py-2 transition-colors ${activeSection === 'services' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
+                >
+                  Услуги
+                </button>
+                <div className="h-6 w-px bg-gradient-to-b from-transparent via-primary to-transparent"></div>
+                <button
+                  onClick={() => scrollToSection('contacts')}
+                  className={`text-base px-4 py-2 transition-colors ${activeSection === 'contacts' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
+                >
+                  Контакты
+                </button>
+              </div>
             </div>
-            <div className="hidden md:flex items-center gap-8">
-              <button
-                onClick={() => scrollToSection('home')}
-                className={`text-sm transition-colors ${activeSection === 'home' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
-              >
-                Главная
-              </button>
-              <button
-                onClick={() => scrollToSection('catalog')}
-                className={`text-sm transition-colors ${activeSection === 'catalog' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
-              >
-                Каталог
-              </button>
-              <button
-                onClick={() => scrollToSection('about')}
-                className={`text-sm transition-colors ${activeSection === 'about' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
-              >
-                О нас
-              </button>
-              <button
-                onClick={() => scrollToSection('services')}
-                className={`text-sm transition-colors ${activeSection === 'services' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
-              >
-                Услуги
-              </button>
-              <button
-                onClick={() => scrollToSection('contacts')}
-                className={`text-sm transition-colors ${activeSection === 'contacts' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
-              >
-                Контакты
-              </button>
-            </div>
-          </div>
-        </nav>
+          </nav>
+        </div>
       </header>
 
       <main className="pt-16">
