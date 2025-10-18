@@ -35,6 +35,11 @@ interface ProductTableProps {
 
 const ProductTable = ({ products, categories, onEdit, onDelete, onBulkDelete, onToggleVisibility, onBulkToggleVisibility, onCategoryChange }: ProductTableProps) => {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [filterCategory, setFilterCategory] = useState<string>('all');
+
+  const filteredProducts = filterCategory === 'all' 
+    ? products 
+    : products.filter(p => p.category === filterCategory);
 
   const toggleSelect = (id: number) => {
     setSelectedIds(prev =>
@@ -43,10 +48,10 @@ const ProductTable = ({ products, categories, onEdit, onDelete, onBulkDelete, on
   };
 
   const toggleSelectAll = () => {
-    if (selectedIds.length === products.length) {
+    if (selectedIds.length === filteredProducts.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(products.map(p => p.id));
+      setSelectedIds(filteredProducts.map(p => p.id));
     }
   };
 
@@ -72,16 +77,33 @@ const ProductTable = ({ products, categories, onEdit, onDelete, onBulkDelete, on
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-4">
           <CardTitle className="text-2xl font-serif">Список товаров</CardTitle>
           <div className="flex items-center gap-2">
+            <Select value={filterCategory} onValueChange={setFilterCategory}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Фильтр по категории" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Все категории</SelectItem>
+                {categories.map(cat => (
+                  <SelectItem key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="flex items-center justify-end">
+          <div className="flex items-center gap-2">
             <Button
-              variant={selectedIds.length === products.length && products.length > 0 ? "default" : "outline"}
+              variant={selectedIds.length === filteredProducts.length && filteredProducts.length > 0 ? "default" : "outline"}
               size="sm"
               onClick={toggleSelectAll}
             >
               <Icon name="CheckSquare" size={16} className="mr-2" />
-              {selectedIds.length === products.length && products.length > 0 ? "Снять выбор" : "Выбрать все"}
+              {selectedIds.length === filteredProducts.length && filteredProducts.length > 0 ? "Снять выбор" : "Выбрать все"}
             </Button>
             {selectedIds.length > 0 && (
               <>
@@ -122,10 +144,6 @@ const ProductTable = ({ products, categories, onEdit, onDelete, onBulkDelete, on
             <thead>
               <tr className="border-b">
                 <th className="text-left p-3 w-12">
-                  <Checkbox
-                    checked={selectedIds.length === products.length && products.length > 0}
-                    onCheckedChange={toggleSelectAll}
-                  />
                 </th>
                 <th className="text-left p-3">Фото</th>
                 <th className="text-left p-3">Артикул</th>
@@ -137,7 +155,7 @@ const ProductTable = ({ products, categories, onEdit, onDelete, onBulkDelete, on
               </tr>
             </thead>
             <tbody>
-              {products.map((product) => (
+              {filteredProducts.map((product) => (
                 <tr key={product.id} className="border-b hover:bg-muted/50">
                   <td className="p-3">
                     <Checkbox
