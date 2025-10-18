@@ -64,40 +64,43 @@ const Index = () => {
     <div className="min-h-screen">
       <header className="fixed top-0 w-full z-50 border-b border-primary/30" style={{ backgroundImage: 'url(https://cdn.poehali.dev/projects/56ebf005-4988-4a0c-b185-3a027ae2f02a/files/d1331506-d80a-410c-bef0-f2011b114ab6.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <div className="bg-background/85 backdrop-blur-sm">
-          <nav className="container mx-auto px-6 py-4">
+          <nav className="container mx-auto px-6 py-2">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <img src="https://cdn.poehali.dev/files/abd9cfe2-f31a-443d-bc01-bea3c9be053a.png" alt="Архив № 8" className="h-32 w-32 object-contain" />
+              <div className="flex items-center gap-4">
+                <h1 className="text-3xl font-bold bg-gradient-to-br from-primary via-amber-400 to-primary bg-clip-text text-transparent" style={{ fontFamily: 'Cardo, serif' }}>
+                  Архив №8
+                </h1>
+                <img src="https://cdn.poehali.dev/files/abd9cfe2-f31a-443d-bc01-bea3c9be053a.png" alt="Архив № 8" className="h-20 w-20 object-contain" />
               </div>
-              <div className="hidden md:flex items-center gap-1">
+              <div className="hidden md:flex items-center gap-2">
                 <button
                   onClick={() => scrollToSection('home')}
                   className={`text-[22px] px-5 py-2 rounded transition-all duration-300 hover:scale-110 hover:border hover:border-primary ${activeSection === 'home' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
                 >
                   Главная
                 </button>
-                <div className="h-4 w-px bg-gradient-to-b from-transparent via-primary/60 to-transparent mx-1"></div>
+                <div className="h-8 w-px bg-gradient-to-b from-transparent via-primary to-transparent"></div>
                 <button
                   onClick={() => scrollToSection('catalog')}
                   className={`text-[22px] px-5 py-2 rounded transition-all duration-300 hover:scale-110 hover:border hover:border-primary ${activeSection === 'catalog' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
                 >
                   Каталог
                 </button>
-                <div className="h-4 w-px bg-gradient-to-b from-transparent via-primary/60 to-transparent mx-1"></div>
+                <div className="h-8 w-px bg-gradient-to-b from-transparent via-primary to-transparent"></div>
                 <button
                   onClick={() => scrollToSection('about')}
                   className={`text-[22px] px-5 py-2 rounded transition-all duration-300 hover:scale-110 hover:border hover:border-primary ${activeSection === 'about' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
                 >
                   О нас
                 </button>
-                <div className="h-4 w-px bg-gradient-to-b from-transparent via-primary/60 to-transparent mx-1"></div>
+                <div className="h-8 w-px bg-gradient-to-b from-transparent via-primary to-transparent"></div>
                 <button
                   onClick={() => scrollToSection('services')}
                   className={`text-[22px] px-5 py-2 rounded transition-all duration-300 hover:scale-110 hover:border hover:border-primary ${activeSection === 'services' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
                 >
                   Услуги
                 </button>
-                <div className="h-4 w-px bg-gradient-to-b from-transparent via-primary/60 to-transparent mx-1"></div>
+                <div className="h-8 w-px bg-gradient-to-b from-transparent via-primary to-transparent"></div>
                 <button
                   onClick={() => scrollToSection('contacts')}
                   className={`text-[22px] px-5 py-2 rounded transition-all duration-300 hover:scale-110 hover:border hover:border-primary ${activeSection === 'contacts' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
@@ -110,7 +113,7 @@ const Index = () => {
         </div>
       </header>
 
-      <main className="pt-16">
+      <main className="pt-20">
         <section id="home" className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background overflow-hidden">
           
           <div className="container mx-auto px-6 text-center relative z-10 animate-fade-in">
