@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 import { useNavigate } from 'react-router-dom';
-import * as XLSX from 'xlsx';
+import LoginForm from '@/components/admin/LoginForm';
+import ProductForm from '@/components/admin/ProductForm';
+import ProductTable from '@/components/admin/ProductTable';
+import ExcelImport from '@/components/admin/ExcelImport';
+import ExcelImportInfo from '@/components/admin/ExcelImportInfo';
 
 interface Product {
   id: number;
@@ -17,13 +18,10 @@ interface Product {
 }
 
 const API_URL = 'https://functions.poehali.dev/60f2060b-ddaf-4a36-adc7-ab19b94dcbf2';
-const ADMIN_PASSWORD = 'Aonddick1';
 
 const Admin = () => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState('');
-  const [passwordError, setPasswordError] = useState('');
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -33,8 +31,6 @@ const Admin = () => {
     name: '',
     price: ''
   });
-  const [uploadingImage, setUploadingImage] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
   const [importingExcel, setImportingExcel] = useState(false);
 
   useEffect(() => {
@@ -45,23 +41,15 @@ const Admin = () => {
     }
   }, []);
 
-  const handlePasswordSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
-      setIsAuthenticated(true);
-      sessionStorage.setItem('adminAuth', 'true');
-      setPasswordError('');
-      loadProducts();
-    } else {
-      setPasswordError('Неверный пароль');
-      setPassword('');
-    }
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+    sessionStorage.setItem('adminAuth', 'true');
+    loadProducts();
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
     sessionStorage.removeItem('adminAuth');
-    setPassword('');
   };
 
   const loadProducts = async () => {
@@ -135,109 +123,8 @@ const Admin = () => {
     setFormData({ photo_url: '', article: '', name: '', price: '' });
   };
 
-  const handleExcelImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setImportingExcel(true);
-    try {
-      const data = await file.arrayBuffer();
-      const workbook = XLSX.read(data);
-      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-      const jsonData = XLSX.utils.sheet_to_json(worksheet);
-
-      let successCount = 0;
-      let errorCount = 0;
-
-      for (const row of jsonData) {
-        try {
-          const rowData: any = row;
-          const payload = {
-            photo_url: rowData['Фото (URL)'] || rowData['photo_url'] || '',
-            article: rowData['Артикул'] || rowData['article'] || '',
-            name: rowData['Наименование'] || rowData['name'] || '',
-            price: parseFloat(rowData['Цена'] || rowData['price'] || '0')
-          };
-
-          if (!payload.article || !payload.name) {
-            errorCount++;
-            continue;
-          }
-
-          await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-
-          successCount++;
-        } catch (error) {
-          errorCount++;
-          console.error('Ошибка импорта строки:', error);
-        }
-      }
-
-      alert(`Импорт завершен!\nУспешно: ${successCount}\nОшибок: ${errorCount}`);
-      loadProducts();
-    } catch (error) {
-      console.error('Ошибка чтения Excel:', error);
-      alert('Не удалось прочитать файл Excel. Проверьте формат файла.');
-    } finally {
-      setImportingExcel(false);
-      e.target.value = '';
-    }
-  };
-
   if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-6">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle className="text-3xl font-serif text-center">
-              <Icon name="Lock" className="inline-block mb-2" size={40} />
-              <div>Вход в админ-панель</div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handlePasswordSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="password">Пароль</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    setPasswordError('');
-                  }}
-                  placeholder="Введите пароль"
-                  required
-                  autoFocus
-                />
-                {passwordError && (
-                  <p className="text-sm text-destructive mt-2">{passwordError}</p>
-                )}
-              </div>
-
-              <Button type="submit" className="w-full">
-                <Icon name="LogIn" className="mr-2" size={18} />
-                Войти
-              </Button>
-
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={() => navigate('/')}
-              >
-                <Icon name="Home" className="mr-2" size={18} />
-                На главную
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    return <LoginForm onLogin={handleLogin} />;
   }
 
   if (loading) {
@@ -254,20 +141,12 @@ const Admin = () => {
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-4xl font-serif font-bold text-primary">Админ-панель</h1>
           <div className="flex gap-2">
-            <Button 
-              variant="default"
-              onClick={() => document.getElementById('excel-upload')?.click()}
-              disabled={importingExcel}
-            >
-              <Icon name="FileSpreadsheet" className="mr-2" size={18} />
-              {importingExcel ? 'Импорт...' : 'Импорт из Excel'}
-            </Button>
-            <input
-              id="excel-upload"
-              type="file"
-              accept=".xlsx,.xls"
-              className="hidden"
-              onChange={handleExcelImport}
+            <ExcelImport
+              importingExcel={importingExcel}
+              onImportStart={() => setImportingExcel(true)}
+              onImportEnd={() => setImportingExcel(false)}
+              onImportSuccess={loadProducts}
+              apiUrl={API_URL}
             />
             <Button variant="outline" onClick={handleLogout}>
               <Icon name="LogOut" className="mr-2" size={18} />
@@ -280,275 +159,21 @@ const Admin = () => {
           </div>
         </div>
 
-        <Card className="mb-6 bg-primary/5 border-primary/20">
-          <CardContent className="pt-6">
-            <div className="flex items-start gap-4">
-              <Icon name="Info" className="text-primary mt-1" size={24} />
-              <div className="flex-1">
-                <h3 className="font-semibold mb-2">Формат Excel-файла для импорта:</h3>
-                <p className="text-sm text-muted-foreground mb-2">
-                  Создайте таблицу Excel со следующими столбцами (в любом порядке):
-                </p>
-                <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
-                  <li><strong>Артикул</strong> (обязательно) - артикул товара</li>
-                  <li><strong>Наименование</strong> (обязательно) - название товара</li>
-                  <li><strong>Цена</strong> (обязательно) - цена в числовом формате</li>
-                  <li><strong>Фото (URL)</strong> (опционально) - ссылка на изображение</li>
-                </ul>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Можно также использовать английские названия: article, name, price, photo_url
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <ExcelImportInfo />
 
-        <Card className="mb-12">
-          <CardHeader>
-            <CardTitle className="text-2xl font-serif">
-              {editingId ? 'Редактировать товар' : 'Добавить товар'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="photo_url">Фото</Label>
-                <div className="space-y-2">
-                  <div className="flex gap-2">
-                    <Input
-                      id="photo_url"
-                      value={formData.photo_url}
-                      onChange={(e) => setFormData({ ...formData, photo_url: e.target.value })}
-                      placeholder="https://example.com/photo.jpg или перетащите файл"
-                      className="flex-1"
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => document.getElementById('file-upload')?.click()}
-                      disabled={uploadingImage}
-                    >
-                      <Icon name="Upload" className="mr-2" size={18} />
-                      {uploadingImage ? 'Загрузка...' : 'Загрузить'}
-                    </Button>
-                  </div>
-                  
-                  <div
-                    className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                      isDragging ? 'border-primary bg-primary/5' : 'border-muted-foreground/30 hover:border-primary/50'
-                    }`}
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                      setIsDragging(true);
-                    }}
-                    onDragLeave={() => setIsDragging(false)}
-                    onDrop={async (e) => {
-                      e.preventDefault();
-                      setIsDragging(false);
-                      
-                      const file = e.dataTransfer.files?.[0];
-                      if (!file || !file.type.startsWith('image/')) {
-                        alert('Пожалуйста, загрузите изображение');
-                        return;
-                      }
+        <ProductForm
+          formData={formData}
+          editingId={editingId}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+          onFormDataChange={setFormData}
+        />
 
-                      setUploadingImage(true);
-                      try {
-                        const uploadFormData = new FormData();
-                        uploadFormData.append('file', file);
-
-                        const response = await fetch('https://functions.poehali.dev/61f83b29-0bba-4f1d-a1fb-7a8d08e5ca77', {
-                          method: 'POST',
-                          body: uploadFormData
-                        });
-
-                        const data = await response.json();
-                        if (data.url) {
-                          setFormData(prev => ({ ...prev, photo_url: data.url }));
-                        }
-                      } catch (error) {
-                        console.error('Ошибка загрузки:', error);
-                        alert('Не удалось загрузить изображение');
-                      } finally {
-                        setUploadingImage(false);
-                      }
-                    }}
-                  >
-                    <Icon name="ImagePlus" className="mx-auto mb-2" size={40} />
-                    <p className="text-muted-foreground">
-                      {uploadingImage ? 'Загрузка...' : 'Перетащите изображение сюда'}
-                    </p>
-                  </div>
-
-                  <input
-                    id="file-upload"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-
-                      setUploadingImage(true);
-                      try {
-                        const uploadFormData = new FormData();
-                        uploadFormData.append('file', file);
-
-                        const response = await fetch('https://functions.poehali.dev/61f83b29-0bba-4f1d-a1fb-7a8d08e5ca77', {
-                          method: 'POST',
-                          body: uploadFormData
-                        });
-
-                        const data = await response.json();
-                        if (data.url) {
-                          setFormData(prev => ({ ...prev, photo_url: data.url }));
-                        }
-                      } catch (error) {
-                        console.error('Ошибка загрузки:', error);
-                        alert('Не удалось загрузить изображение');
-                      } finally {
-                        setUploadingImage(false);
-                        e.target.value = '';
-                      }
-                    }}
-                  />
-                  
-                  {formData.photo_url && (
-                    <div className="relative inline-block">
-                      <img
-                        src={formData.photo_url}
-                        alt="Предпросмотр"
-                        className="w-32 h-32 object-cover rounded border"
-                      />
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full"
-                        onClick={() => setFormData(prev => ({ ...prev, photo_url: '' }))}
-                      >
-                        <Icon name="X" size={14} />
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="article">Артикул *</Label>
-                <Input
-                  id="article"
-                  value={formData.article}
-                  onChange={(e) => setFormData({ ...formData, article: e.target.value })}
-                  placeholder="ART-001"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="name">Наименование *</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Название товара"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="price">Цена *</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  step="0.01"
-                  value={formData.price}
-                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                  placeholder="5000"
-                  required
-                />
-              </div>
-
-              <div className="flex gap-3">
-                <Button type="submit" className="flex-1">
-                  <Icon name={editingId ? "Save" : "Plus"} className="mr-2" size={18} />
-                  {editingId ? 'Сохранить' : 'Добавить'}
-                </Button>
-                {editingId && (
-                  <Button type="button" variant="outline" onClick={handleCancel}>
-                    Отмена
-                  </Button>
-                )}
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-
-        <div className="space-y-4">
-          <h2 className="text-2xl font-serif font-bold text-foreground mb-6">
-            Все товары ({products.length})
-          </h2>
-
-          {products.length === 0 ? (
-            <Card>
-              <CardContent className="py-12 text-center text-muted-foreground">
-                Товары не найдены. Добавьте первый товар!
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid gap-4">
-              {products.map((product) => (
-                <Card key={product.id} className="overflow-hidden">
-                  <CardContent className="p-4">
-                    <div className="flex gap-4 items-start">
-                      {product.photo_url && (
-                        <img
-                          src={product.photo_url}
-                          alt={product.name}
-                          className="w-24 h-24 object-cover rounded border"
-                        />
-                      )}
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-4">
-                          <div>
-                            <div className="text-sm text-muted-foreground mb-1">
-                              Артикул: {product.article}
-                            </div>
-                            <h3 className="text-xl font-semibold text-foreground mb-2">
-                              {product.name}
-                            </h3>
-                            <div className="text-2xl font-bold text-primary">
-                              {parseFloat(product.price).toLocaleString('ru-RU')} ₽
-                            </div>
-                          </div>
-
-                          <div className="flex gap-2 shrink-0">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleEdit(product)}
-                            >
-                              <Icon name="Edit" size={16} />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleDelete(product.id)}
-                              className="text-destructive hover:text-destructive"
-                            >
-                              <Icon name="Trash2" size={16} />
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </div>
+        <ProductTable
+          products={products}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
       </div>
     </div>
   );

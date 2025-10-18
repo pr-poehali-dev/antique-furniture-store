@@ -1,0 +1,90 @@
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import Icon from '@/components/ui/icon';
+
+interface Product {
+  id: number;
+  photo_url: string;
+  article: string;
+  name: string;
+  price: string;
+  created_at: string;
+}
+
+interface ProductTableProps {
+  products: Product[];
+  onEdit: (product: Product) => void;
+  onDelete: (id: number) => void;
+}
+
+const ProductTable = ({ products, onEdit, onDelete }: ProductTableProps) => {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-2xl font-serif">Список товаров</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b">
+                <th className="text-left p-3">Фото</th>
+                <th className="text-left p-3">Артикул</th>
+                <th className="text-left p-3">Наименование</th>
+                <th className="text-left p-3">Цена</th>
+                <th className="text-left p-3">Действия</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map((product) => (
+                <tr key={product.id} className="border-b hover:bg-muted/50">
+                  <td className="p-3">
+                    {product.photo_url ? (
+                      <img
+                        src={product.photo_url}
+                        alt={product.name}
+                        className="w-16 h-16 object-cover rounded"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 bg-muted rounded flex items-center justify-center">
+                        <Icon name="ImageOff" size={24} className="text-muted-foreground" />
+                      </div>
+                    )}
+                  </td>
+                  <td className="p-3">{product.article}</td>
+                  <td className="p-3">{product.name}</td>
+                  <td className="p-3">{parseFloat(product.price).toLocaleString('ru-RU')} ₽</td>
+                  <td className="p-3">
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => onEdit(product)}
+                      >
+                        <Icon name="Edit" size={16} />
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => onDelete(product.id)}
+                      >
+                        <Icon name="Trash2" size={16} />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {products.length === 0 && (
+            <div className="text-center py-8 text-muted-foreground">
+              Товары не найдены. Добавьте первый товар.
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default ProductTable;
