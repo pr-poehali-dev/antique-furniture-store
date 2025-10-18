@@ -42,7 +42,7 @@ const ExcelImport = ({ importingExcel, onImportStart, onImportEnd, onImportSucce
           const photoValue = rowData['Фото (URL)'] || rowData['Фото'] || rowData['photo_url'] || rowData[keys[0]] || '';
           const articleValue = rowData['Артикул'] || rowData['article'] || rowData['__EMPTY'] || rowData[keys[1]] || '';
           const nameValue = rowData['Наименование'] || rowData['name'] || rowData['__EMPTY_1'] || rowData[keys[2]] || '';
-          const rawPrice = rowData['Цена'] || rowData['price'] || rowData['__EMPTY_2'] || rowData['__EMPTY_3'] || rowData[keys[3]] || rowData[keys[4]] || '0';
+          const rawPrice = rowData['Цена продажи факт'] || rowData['Цена'] || rowData['price'] || rowData['__EMPTY_2'] || rowData['__EMPTY_3'] || rowData[keys[3]] || rowData[keys[4]] || '0';
           
           // Очистка цены от пробелов и замена запятой на точку
           const priceValue = String(rawPrice)
