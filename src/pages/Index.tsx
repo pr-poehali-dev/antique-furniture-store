@@ -248,6 +248,9 @@ const Index = () => {
                             src={product.photo_url}
                             alt={product.name}
                             className="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-110"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="320"%3E%3Crect fill="%23f0f0f0" width="400" height="320"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EФото недоступно%3C/text%3E%3C/svg%3E';
+                            }}
                           />
                         ) : (
                           <div className="w-full h-80 flex items-center justify-center bg-muted">

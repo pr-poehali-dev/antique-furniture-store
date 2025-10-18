@@ -103,10 +103,17 @@ const ProductTable = ({ products, onEdit, onDelete, onBulkDelete }: ProductTable
                       <img
                         src={product.photo_url}
                         alt={product.name}
-                        className="w-16 h-16 object-cover rounded"
+                        className="w-20 h-20 object-cover rounded border border-border"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                          const parent = (e.target as HTMLImageElement).parentElement;
+                          if (parent) {
+                            parent.innerHTML = '<div class="w-20 h-20 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">Нет фото</div>';
+                          }
+                        }}
                       />
                     ) : (
-                      <div className="w-16 h-16 bg-muted rounded flex items-center justify-center">
+                      <div className="w-20 h-20 bg-muted rounded flex items-center justify-center">
                         <Icon name="ImageOff" size={24} className="text-muted-foreground" />
                       </div>
                     )}
