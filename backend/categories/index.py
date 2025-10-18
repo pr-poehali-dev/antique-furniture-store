@@ -5,6 +5,7 @@ Args: event - dict с httpMethod, body, queryStringParameters
 Returns: HTTP response dict с данными категорий
 '''
 
+
 import json
 import os
 from typing import Dict, Any, Optional
