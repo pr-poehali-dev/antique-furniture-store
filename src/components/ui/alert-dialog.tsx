@@ -28,19 +28,22 @@ AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName
 const AlertDialogContent = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content>
->(({ className, ...props }, ref) => (
+>(({ className, children, ...props }, ref) => (
   <AlertDialogPortal>
     <AlertDialogOverlay />
     <AlertDialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-6 border-2 border-primary/30 bg-background p-8 shadow-2xl shadow-primary/20 rounded-xl",
-        "data-[state=open]:animate-dialog-glow data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-top-[48%]",
-        "before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-r before:from-transparent before:via-primary/10 before:to-transparent before:bg-[length:200%_100%] before:animate-shimmer before:pointer-events-none",
+        "fixed left-[50%] top-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%]",
+        "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
         className
       )}
       {...props}
-    />
+    >
+      <div className="relative grid gap-6 border-2 border-primary/30 bg-background p-8 shadow-2xl shadow-primary/20 rounded-xl data-[state=open]:animate-dialog-glow before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-r before:from-transparent before:via-primary/10 before:to-transparent before:bg-[length:200%_100%] before:animate-shimmer before:pointer-events-none" data-state={props['data-state'] || 'open'}>
+        {children}
+      </div>
+    </AlertDialogPrimitive.Content>
   </AlertDialogPortal>
 ))
 AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName
