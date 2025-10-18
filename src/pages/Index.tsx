@@ -22,6 +22,7 @@ interface Category {
 }
 
 const API_URL = 'https://functions.poehali.dev/60f2060b-ddaf-4a36-adc7-ab19b94dcbf2';
+const CATEGORIES_API_URL = 'https://functions.poehali.dev/19719648-b1bf-45a7-9488-4c9fe354fbb0';
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState('home');
@@ -29,6 +30,7 @@ const Index = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -42,6 +44,7 @@ const Index = () => {
 
   useEffect(() => {
     loadProducts();
+    loadCategories();
   }, []);
 
   const loadProducts = async () => {
@@ -57,13 +60,19 @@ const Index = () => {
     }
   };
 
-  const categories: Category[] = [
-    { id: 'all', name: 'Все категории', icon: 'Grid' },
-    { id: 'sets', name: 'Гарнитуры и комплекты', icon: 'Sofa' },
-    { id: 'storage', name: 'Комоды, сундуки, тумбы', icon: 'Box' },
-    { id: 'mirrors', name: 'Зеркала, ширмы', icon: 'Square' },
-    { id: 'tables', name: 'Столы, консоли', icon: 'Table' }
-  ];
+  const loadCategories = async () => {
+    try {
+      const response = await fetch(CATEGORIES_API_URL);
+      const data = await response.json();
+      setCategories(data);
+    } catch (error) {
+      console.error('Ошибка загрузки категорий:', error);
+      // Если не удалось загрузить, используем стандартные
+      setCategories([
+        { id: 'all', name: 'Все категории', icon: 'Grid' }
+      ]);
+    }
+  };
 
   const filteredProducts = selectedCategory === 'all' 
     ? products 

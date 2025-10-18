@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Icon from '@/components/ui/icon';
 
 interface Product {
@@ -15,16 +16,24 @@ interface Product {
   category?: string;
 }
 
+interface Category {
+  id: string;
+  name: string;
+  icon: string;
+}
+
 interface ProductTableProps {
   products: Product[];
+  categories: Category[];
   onEdit: (product: Product) => void;
   onDelete: (id: number) => void;
   onBulkDelete: (ids: number[]) => void;
   onToggleVisibility: (id: number, visible: boolean) => void;
   onBulkToggleVisibility: (ids: number[], visible: boolean) => void;
+  onCategoryChange: (id: number, category: string) => void;
 }
 
-const ProductTable = ({ products, onEdit, onDelete, onBulkDelete, onToggleVisibility, onBulkToggleVisibility }: ProductTableProps) => {
+const ProductTable = ({ products, categories, onEdit, onDelete, onBulkDelete, onToggleVisibility, onBulkToggleVisibility, onCategoryChange }: ProductTableProps) => {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   const toggleSelect = (id: number) => {
@@ -159,12 +168,21 @@ const ProductTable = ({ products, onEdit, onDelete, onBulkDelete, onToggleVisibi
                   <td className="p-3">{product.article}</td>
                   <td className="p-3">{product.name}</td>
                   <td className="p-3">
-                    <span className="text-xs px-2 py-1 rounded-full bg-muted text-muted-foreground">
-                      {product.category === 'sets' ? 'Гарнитуры' :
-                       product.category === 'storage' ? 'Комоды' :
-                       product.category === 'mirrors' ? 'Зеркала' :
-                       product.category === 'tables' ? 'Столы' : 'Все'}
-                    </span>
+                    <Select 
+                      value={product.category || 'all'} 
+                      onValueChange={(value) => onCategoryChange(product.id, value)}
+                    >
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map(cat => (
+                          <SelectItem key={cat.id} value={cat.id}>
+                            {cat.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </td>
                   <td className="p-3">{parseFloat(product.price).toLocaleString('ru-RU')} ₽</td>
                   <td className="p-3">

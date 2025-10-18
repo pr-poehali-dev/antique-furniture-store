@@ -1,0 +1,11 @@
+{
+  "tests": [
+    {
+      "name": "Получить все категории",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "bodyMatcher": "partial"
+    }
+  ]
+}

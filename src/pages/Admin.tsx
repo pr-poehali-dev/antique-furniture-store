@@ -7,6 +7,7 @@ import ProductForm from '@/components/admin/ProductForm';
 import ProductTable from '@/components/admin/ProductTable';
 import ExcelImport from '@/components/admin/ExcelImport';
 import ExcelImportInfo from '@/components/admin/ExcelImportInfo';
+import CategoryManager from '@/components/admin/CategoryManager';
 
 interface Product {
   id: number;
@@ -19,12 +20,21 @@ interface Product {
   category?: string;
 }
 
+interface Category {
+  id: string;
+  name: string;
+  icon: string;
+  sort_order?: number;
+}
+
 const API_URL = 'https://functions.poehali.dev/60f2060b-ddaf-4a36-adc7-ab19b94dcbf2';
+const CATEGORIES_API_URL = 'https://functions.poehali.dev/19719648-b1bf-45a7-9488-4c9fe354fbb0';
 
 const Admin = () => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
@@ -41,6 +51,7 @@ const Admin = () => {
     if (savedAuth === 'true') {
       setIsAuthenticated(true);
       loadProducts();
+      loadCategories();
     }
   }, []);
 
@@ -48,6 +59,7 @@ const Admin = () => {
     setIsAuthenticated(true);
     sessionStorage.setItem('adminAuth', 'true');
     loadProducts();
+    loadCategories();
   };
 
   const handleLogout = () => {
@@ -65,6 +77,16 @@ const Admin = () => {
       console.error('Ошибка загрузки товаров:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadCategories = async () => {
+    try {
+      const response = await fetch(CATEGORIES_API_URL);
+      const data = await response.json();
+      setCategories(data);
+    } catch (error) {
+      console.error('Ошибка загрузки категорий:', error);
     }
   };
 
@@ -170,6 +192,21 @@ const Admin = () => {
     }
   };
 
+  const handleCategoryChange = async (id: number, category: string) => {
+    try {
+      await fetch(API_URL, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, category })
+      });
+      setProducts(prev => prev.map(p => 
+        p.id === id ? { ...p, category } : p
+      ));
+    } catch (error) {
+      console.error('Ошибка обновления категории:', error);
+    }
+  };
+
   if (!isAuthenticated) {
     return <LoginForm onLogin={handleLogin} />;
   }
@@ -208,6 +245,12 @@ const Admin = () => {
 
         <ExcelImportInfo />
 
+        <CategoryManager
+          categories={categories}
+          onRefresh={loadCategories}
+          apiUrl={CATEGORIES_API_URL}
+        />
+
         <ProductForm
           formData={formData}
           editingId={editingId}
@@ -218,11 +261,13 @@ const Admin = () => {
 
         <ProductTable
           products={products}
+          categories={categories}
           onEdit={handleEdit}
           onDelete={handleDelete}
           onBulkDelete={handleBulkDelete}
           onToggleVisibility={handleToggleVisibility}
           onBulkToggleVisibility={handleBulkToggleVisibility}
+          onCategoryChange={handleCategoryChange}
         />
       </div>
     </div>
