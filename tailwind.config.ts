@@ -100,7 +100,7 @@ export default {
 				'dialog-glow': {
 					'0%': { 
 						opacity: '0', 
-						transform: 'scale(0.9) translateY(20px)',
+						transform: 'scale(0.9)',
 						boxShadow: '0 0 0 0 hsl(var(--primary) / 0)'
 					},
 					'50%': {
@@ -108,7 +108,7 @@ export default {
 					},
 					'100%': { 
 						opacity: '1', 
-						transform: 'scale(1) translateY(0)',
+						transform: 'scale(1)',
 						boxShadow: '0 25px 50px -12px hsl(var(--primary) / 0.2)'
 					}
 				},
