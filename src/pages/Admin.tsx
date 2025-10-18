@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 import { useNavigate } from 'react-router-dom';
+import * as XLSX from 'xlsx';
 
 interface Product {
   id: number;
@@ -34,6 +35,7 @@ const Admin = () => {
   });
   const [uploadingImage, setUploadingImage] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [importingExcel, setImportingExcel] = useState(false);
 
   useEffect(() => {
     const savedAuth = sessionStorage.getItem('adminAuth');
@@ -133,6 +135,59 @@ const Admin = () => {
     setFormData({ photo_url: '', article: '', name: '', price: '' });
   };
 
+  const handleExcelImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImportingExcel(true);
+    try {
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data);
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+      let successCount = 0;
+      let errorCount = 0;
+
+      for (const row of jsonData) {
+        try {
+          const rowData: any = row;
+          const payload = {
+            photo_url: rowData['Фото (URL)'] || rowData['photo_url'] || '',
+            article: rowData['Артикул'] || rowData['article'] || '',
+            name: rowData['Наименование'] || rowData['name'] || '',
+            price: parseFloat(rowData['Цена'] || rowData['price'] || '0')
+          };
+
+          if (!payload.article || !payload.name) {
+            errorCount++;
+            continue;
+          }
+
+          await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          successCount++;
+        } catch (error) {
+          errorCount++;
+          console.error('Ошибка импорта строки:', error);
+        }
+      }
+
+      alert(`Импорт завершен!\nУспешно: ${successCount}\nОшибок: ${errorCount}`);
+      loadProducts();
+    } catch (error) {
+      console.error('Ошибка чтения Excel:', error);
+      alert('Не удалось прочитать файл Excel. Проверьте формат файла.');
+    } finally {
+      setImportingExcel(false);
+      e.target.value = '';
+    }
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
@@ -199,6 +254,21 @@ const Admin = () => {
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-4xl font-serif font-bold text-primary">Админ-панель</h1>
           <div className="flex gap-2">
+            <Button 
+              variant="default"
+              onClick={() => document.getElementById('excel-upload')?.click()}
+              disabled={importingExcel}
+            >
+              <Icon name="FileSpreadsheet" className="mr-2" size={18} />
+              {importingExcel ? 'Импорт...' : 'Импорт из Excel'}
+            </Button>
+            <input
+              id="excel-upload"
+              type="file"
+              accept=".xlsx,.xls"
+              className="hidden"
+              onChange={handleExcelImport}
+            />
             <Button variant="outline" onClick={handleLogout}>
               <Icon name="LogOut" className="mr-2" size={18} />
               Выйти
@@ -209,6 +279,29 @@ const Admin = () => {
             </Button>
           </div>
         </div>
+
+        <Card className="mb-6 bg-primary/5 border-primary/20">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-4">
+              <Icon name="Info" className="text-primary mt-1" size={24} />
+              <div className="flex-1">
+                <h3 className="font-semibold mb-2">Формат Excel-файла для импорта:</h3>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Создайте таблицу Excel со следующими столбцами (в любом порядке):
+                </p>
+                <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
+                  <li><strong>Артикул</strong> (обязательно) - артикул товара</li>
+                  <li><strong>Наименование</strong> (обязательно) - название товара</li>
+                  <li><strong>Цена</strong> (обязательно) - цена в числовом формате</li>
+                  <li><strong>Фото (URL)</strong> (опционально) - ссылка на изображение</li>
+                </ul>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Можно также использовать английские названия: article, name, price, photo_url
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         <Card className="mb-12">
           <CardHeader>
