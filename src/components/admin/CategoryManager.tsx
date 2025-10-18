@@ -263,10 +263,7 @@ const CategoryManager = ({ categories, onRefresh, apiUrl }: CategoryManagerProps
                   <SelectContent>
                     {iconOptions.map(icon => (
                       <SelectItem key={icon} value={icon}>
-                        <div className="flex items-center gap-2">
-                          <Icon name={icon} size={18} />
-                          <span>{icon}</span>
-                        </div>
+                        <Icon name={icon} size={18} />
                       </SelectItem>
                     ))}
                   </SelectContent>
