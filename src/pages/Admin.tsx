@@ -28,6 +28,7 @@ interface Product {
   created_at: string;
   is_visible?: boolean;
   category?: string;
+  sort_order?: number;
 }
 
 interface Category {
@@ -227,6 +228,23 @@ const Admin = () => {
     }
   };
 
+  const handleSortOrderChange = async (updatedProducts: Product[]) => {
+    try {
+      await Promise.all(
+        updatedProducts.map((product, index) =>
+          fetch(API_URL, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: product.id, sort_order: index })
+          })
+        )
+      );
+      loadProducts();
+    } catch (error) {
+      console.error('Ошибка обновления порядка:', error);
+    }
+  };
+
   if (!isAuthenticated) {
     return <LoginForm onLogin={handleLogin} />;
   }
@@ -288,6 +306,7 @@ const Admin = () => {
           onToggleVisibility={handleToggleVisibility}
           onBulkToggleVisibility={handleBulkToggleVisibility}
           onCategoryChange={handleCategoryChange}
+          onSortOrderChange={handleSortOrderChange}
         />
 
         <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

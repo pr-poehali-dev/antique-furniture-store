@@ -4,6 +4,23 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Icon from '@/components/ui/icon';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface Product {
   id: number;
@@ -14,6 +31,7 @@ interface Product {
   created_at: string;
   is_visible?: boolean;
   category?: string;
+  sort_order?: number;
 }
 
 interface Category {
@@ -31,15 +49,122 @@ interface ProductTableProps {
   onToggleVisibility: (id: number, visible: boolean) => void;
   onBulkToggleVisibility: (ids: number[], visible: boolean) => void;
   onCategoryChange: (id: number, category: string) => void;
+  onSortOrderChange: (products: Product[]) => void;
 }
 
-const ProductTable = ({ products, categories, onEdit, onDelete, onBulkDelete, onToggleVisibility, onBulkToggleVisibility, onCategoryChange }: ProductTableProps) => {
+const SortableProductRow = ({ product, categories, selectedIds, onToggleSelect, onEdit, onDelete, onToggleVisibility, onCategoryChange }: any) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: product.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <tr ref={setNodeRef} style={style} className="border-b hover:bg-muted/50 bg-background">
+      <td className="p-3">
+        <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing">
+          <Icon name="GripVertical" size={20} className="text-muted-foreground" />
+        </div>
+      </td>
+      <td className="p-3">
+        <Checkbox
+          checked={selectedIds.includes(product.id)}
+          onCheckedChange={() => onToggleSelect(product.id)}
+        />
+      </td>
+      <td className="p-3">
+        {product.photo_url ? (
+          <img
+            src={product.photo_url}
+            alt={product.name}
+            className="w-20 h-20 object-cover rounded border border-border"
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = 'none';
+              const parent = (e.target as HTMLImageElement).parentElement;
+              if (parent) {
+                parent.innerHTML = '<div class="w-20 h-20 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">Нет фото</div>';
+              }
+            }}
+          />
+        ) : (
+          <div className="w-20 h-20 bg-muted rounded flex items-center justify-center">
+            <Icon name="ImageOff" size={24} className="text-muted-foreground" />
+          </div>
+        )}
+      </td>
+      <td className="p-3">{product.article}</td>
+      <td className="p-3">{product.name}</td>
+      <td className="p-3">
+        <Select 
+          value={product.category || 'all'} 
+          onValueChange={(value) => onCategoryChange(product.id, value)}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {categories.map((cat: Category) => (
+              <SelectItem key={cat.id} value={cat.id}>
+                {cat.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </td>
+      <td className="p-3">{parseFloat(product.price).toLocaleString('ru-RU')} ₽</td>
+      <td className="p-3">
+        <div className="flex items-center gap-2">
+          <Checkbox
+            checked={product.is_visible !== false}
+            onCheckedChange={(checked) => onToggleVisibility(product.id, checked as boolean)}
+          />
+          <span className="text-sm text-muted-foreground">
+            {product.is_visible !== false ? 'На сайте' : 'Скрыт'}
+          </span>
+        </div>
+      </td>
+      <td className="p-3">
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={() => onEdit(product)}>
+            <Icon name="Edit" size={14} />
+          </Button>
+          <Button variant="destructive" size="sm" onClick={() => onDelete(product.id)}>
+            <Icon name="Trash2" size={14} />
+          </Button>
+        </div>
+      </td>
+    </tr>
+  );
+};
+
+const ProductTable = ({ products, categories, onEdit, onDelete, onBulkDelete, onToggleVisibility, onBulkToggleVisibility, onCategoryChange, onSortOrderChange }: ProductTableProps) => {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [localProducts, setLocalProducts] = useState<Product[]>([]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const filteredProducts = filterCategory === 'all' 
-    ? products 
-    : products.filter(p => p.category === filterCategory);
+    ? (localProducts.length > 0 ? localProducts : products)
+    : (localProducts.length > 0 ? localProducts : products).filter(p => p.category === filterCategory);
+
+  if (localProducts.length === 0 && products.length > 0) {
+    setLocalProducts(products);
+  }
 
   const toggleSelect = (id: number) => {
     setSelectedIds(prev =>
@@ -72,6 +197,19 @@ const ProductTable = ({ products, categories, onEdit, onDelete, onBulkDelete, on
     if (selectedIds.length === 0) return;
     onBulkToggleVisibility(selectedIds, false);
     setSelectedIds([]);
+  };
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = localProducts.findIndex((p) => p.id === active.id);
+      const newIndex = localProducts.findIndex((p) => p.id === over.id);
+
+      const newOrder = arrayMove(localProducts, oldIndex, newIndex);
+      setLocalProducts(newOrder);
+      onSortOrderChange(newOrder);
+    }
   };
 
   return (
@@ -126,8 +264,8 @@ const ProductTable = ({ products, categories, onEdit, onDelete, onBulkDelete, on
           <table className="w-full">
             <thead>
               <tr className="border-b">
-                <th className="text-left p-3 w-12">
-                </th>
+                <th className="text-left p-3 w-12"></th>
+                <th className="text-left p-3 w-12"></th>
                 <th className="text-left p-3">Фото</th>
                 <th className="text-left p-3">Артикул</th>
                 <th className="text-left p-3">Наименование</th>
@@ -150,87 +288,32 @@ const ProductTable = ({ products, categories, onEdit, onDelete, onBulkDelete, on
                 <th className="text-left p-3">Действия</th>
               </tr>
             </thead>
-            <tbody>
-              {filteredProducts.map((product) => (
-                <tr key={product.id} className="border-b hover:bg-muted/50">
-                  <td className="p-3">
-                    <Checkbox
-                      checked={selectedIds.includes(product.id)}
-                      onCheckedChange={() => toggleSelect(product.id)}
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={filteredProducts.map(p => p.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <tbody>
+                  {filteredProducts.map((product) => (
+                    <SortableProductRow
+                      key={product.id}
+                      product={product}
+                      categories={categories}
+                      selectedIds={selectedIds}
+                      onToggleSelect={toggleSelect}
+                      onEdit={onEdit}
+                      onDelete={onDelete}
+                      onToggleVisibility={onToggleVisibility}
+                      onCategoryChange={onCategoryChange}
                     />
-                  </td>
-                  <td className="p-3">
-                    {product.photo_url ? (
-                      <img
-                        src={product.photo_url}
-                        alt={product.name}
-                        className="w-20 h-20 object-cover rounded border border-border"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = 'none';
-                          const parent = (e.target as HTMLImageElement).parentElement;
-                          if (parent) {
-                            parent.innerHTML = '<div class="w-20 h-20 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">Нет фото</div>';
-                          }
-                        }}
-                      />
-                    ) : (
-                      <div className="w-20 h-20 bg-muted rounded flex items-center justify-center">
-                        <Icon name="ImageOff" size={24} className="text-muted-foreground" />
-                      </div>
-                    )}
-                  </td>
-                  <td className="p-3">{product.article}</td>
-                  <td className="p-3">{product.name}</td>
-                  <td className="p-3">
-                    <Select 
-                      value={product.category || 'all'} 
-                      onValueChange={(value) => onCategoryChange(product.id, value)}
-                    >
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories.map(cat => (
-                          <SelectItem key={cat.id} value={cat.id}>
-                            {cat.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </td>
-                  <td className="p-3">{parseFloat(product.price).toLocaleString('ru-RU')} ₽</td>
-                  <td className="p-3">
-                    <div className="flex items-center gap-2">
-                      <Checkbox
-                        checked={product.is_visible !== false}
-                        onCheckedChange={(checked) => onToggleVisibility(product.id, checked as boolean)}
-                      />
-                      <span className="text-sm text-muted-foreground">
-                        {product.is_visible !== false ? 'На сайте' : 'Скрыт'}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="p-3">
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => onEdit(product)}
-                      >
-                        <Icon name="Edit" size={16} />
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => onDelete(product.id)}
-                      >
-                        <Icon name="Trash2" size={16} />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+                  ))}
+                </tbody>
+              </SortableContext>
+            </DndContext>
           </table>
           {products.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">

@@ -45,7 +45,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             
             if product_id:
                 cur.execute(
-                    "SELECT id, photo_url, article, name, price, created_at, is_visible, category FROM products_new WHERE id = %s",
+                    "SELECT id, photo_url, article, name, price, created_at, is_visible, category, sort_order FROM products WHERE id = %s",
                     (product_id,)
                 )
                 product = cur.fetchone()
@@ -63,7 +63,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'body': json.dumps(dict(product), default=str)
                 }
             else:
-                cur.execute("SELECT id, photo_url, article, name, price, created_at, is_visible, category FROM products_new ORDER BY created_at DESC")
+                cur.execute("SELECT id, photo_url, article, name, price, created_at, is_visible, category, sort_order FROM products ORDER BY COALESCE(sort_order, 999999), created_at DESC")
                 products = cur.fetchall()
                 
                 return {
@@ -120,6 +120,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             name = body_data.get('name')
             price = body_data.get('price')
             category = body_data.get('category')
+            sort_order = body_data.get('sort_order')
             
             updates = []
             values = []
@@ -139,6 +140,9 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             if category:
                 updates.append("category = %s")
                 values.append(category)
+            if sort_order is not None:
+                updates.append("sort_order = %s")
+                values.append(sort_order)
             
             if not updates:
                 return {
@@ -148,7 +152,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 }
             
             values.append(product_id)
-            query = f"UPDATE products_new SET {', '.join(updates)} WHERE id = %s RETURNING id, photo_url, article, name, price, created_at, is_visible, category"
+            query = f"UPDATE products SET {', '.join(updates)} WHERE id = %s RETURNING id, photo_url, article, name, price, created_at, is_visible, category, sort_order"
             
             cur.execute(query, values)
             updated_product = cur.fetchone()

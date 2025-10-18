@@ -13,6 +13,7 @@ interface Product {
   created_at: string;
   is_visible?: boolean;
   category?: string;
+  sort_order?: number;
 }
 
 interface Category {
