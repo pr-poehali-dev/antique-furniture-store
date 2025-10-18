@@ -137,7 +137,6 @@ const ProductTable = ({ products, categories, onEdit, onDelete, onBulkDelete, on
                       <SelectValue placeholder="Категория" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">Все категории</SelectItem>
                       {categories.map(cat => (
                         <SelectItem key={cat.id} value={cat.id}>
                           {cat.name}
