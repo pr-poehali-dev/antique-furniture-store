@@ -112,9 +112,20 @@ const Admin = () => {
 
     try {
       await fetch(`${API_URL}?id=${id}`, { method: 'DELETE' });
-      loadProducts();
+      setProducts(prev => prev.filter(p => p.id !== id));
     } catch (error) {
       console.error('Ошибка удаления:', error);
+    }
+  };
+
+  const handleBulkDelete = async (ids: number[]) => {
+    try {
+      await Promise.all(
+        ids.map(id => fetch(`${API_URL}?id=${id}`, { method: 'DELETE' }))
+      );
+      setProducts(prev => prev.filter(p => !ids.includes(p.id)));
+    } catch (error) {
+      console.error('Ошибка массового удаления:', error);
     }
   };
 
@@ -173,6 +184,7 @@ const Admin = () => {
           products={products}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onBulkDelete={handleBulkDelete}
         />
       </div>
     </div>

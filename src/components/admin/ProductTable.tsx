@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import Icon from '@/components/ui/icon';
 
 interface Product {
@@ -15,19 +17,61 @@ interface ProductTableProps {
   products: Product[];
   onEdit: (product: Product) => void;
   onDelete: (id: number) => void;
+  onBulkDelete: (ids: number[]) => void;
 }
 
-const ProductTable = ({ products, onEdit, onDelete }: ProductTableProps) => {
+const ProductTable = ({ products, onEdit, onDelete, onBulkDelete }: ProductTableProps) => {
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+
+  const toggleSelect = (id: number) => {
+    setSelectedIds(prev =>
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.length === products.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(products.map(p => p.id));
+    }
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedIds.length === 0) return;
+    if (!confirm(`Удалить выбранные товары (${selectedIds.length} шт.)?`)) return;
+    onBulkDelete(selectedIds);
+    setSelectedIds([]);
+  };
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl font-serif">Список товаров</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-2xl font-serif">Список товаров</CardTitle>
+          {selectedIds.length > 0 && (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleBulkDelete}
+            >
+              <Icon name="Trash2" size={16} className="mr-2" />
+              Удалить выбранные ({selectedIds.length})
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b">
+                <th className="text-left p-3 w-12">
+                  <Checkbox
+                    checked={selectedIds.length === products.length && products.length > 0}
+                    onCheckedChange={toggleSelectAll}
+                  />
+                </th>
                 <th className="text-left p-3">Фото</th>
                 <th className="text-left p-3">Артикул</th>
                 <th className="text-left p-3">Наименование</th>
@@ -38,6 +82,12 @@ const ProductTable = ({ products, onEdit, onDelete }: ProductTableProps) => {
             <tbody>
               {products.map((product) => (
                 <tr key={product.id} className="border-b hover:bg-muted/50">
+                  <td className="p-3">
+                    <Checkbox
+                      checked={selectedIds.includes(product.id)}
+                      onCheckedChange={() => toggleSelect(product.id)}
+                    />
+                  </td>
                   <td className="p-3">
                     {product.photo_url ? (
                       <img
