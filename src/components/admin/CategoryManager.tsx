@@ -191,7 +191,7 @@ const CategoryManager = ({ categories, onRefresh, apiUrl }: CategoryManagerProps
         )}
 
         <div className="space-y-2">
-          {categories.map((category) => (
+          {categories.filter(cat => cat.id !== 'all').map((category) => (
             <div key={category.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/30">
               <div className="flex items-center gap-3">
                 <Icon name={category.icon} size={20} className="text-primary" />
@@ -208,15 +208,13 @@ const CategoryManager = ({ categories, onRefresh, apiUrl }: CategoryManagerProps
                 >
                   <Icon name="Edit" size={14} />
                 </Button>
-                {category.id !== 'all' && (
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDelete(category.id)}
-                  >
-                    <Icon name="Trash2" size={14} />
-                  </Button>
-                )}
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => handleDelete(category.id)}
+                >
+                  <Icon name="Trash2" size={14} />
+                </Button>
               </div>
             </div>
           ))}
