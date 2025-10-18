@@ -49,16 +49,26 @@ const ProductTable = ({ products, onEdit, onDelete, onBulkDelete }: ProductTable
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-2xl font-serif">Список товаров</CardTitle>
-          {selectedIds.length > 0 && (
+          <div className="flex items-center gap-2">
             <Button
-              variant="destructive"
+              variant={selectedIds.length === products.length && products.length > 0 ? "default" : "outline"}
               size="sm"
-              onClick={handleBulkDelete}
+              onClick={toggleSelectAll}
             >
-              <Icon name="Trash2" size={16} className="mr-2" />
-              Удалить выбранные ({selectedIds.length})
+              <Icon name="CheckSquare" size={16} className="mr-2" />
+              {selectedIds.length === products.length && products.length > 0 ? "Снять выбор" : "Выбрать все"}
             </Button>
-          )}
+            {selectedIds.length > 0 && (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleBulkDelete}
+              >
+                <Icon name="Trash2" size={16} className="mr-2" />
+                Удалить выбранные ({selectedIds.length})
+              </Button>
+            )}
+          </div>
         </div>
       </CardHeader>
       <CardContent>
@@ -66,14 +76,11 @@ const ProductTable = ({ products, onEdit, onDelete, onBulkDelete }: ProductTable
           <table className="w-full">
             <thead>
               <tr className="border-b">
-                <th className="text-left p-3">
-                  <div className="flex items-center gap-2">
-                    <Checkbox
-                      checked={selectedIds.length === products.length && products.length > 0}
-                      onCheckedChange={toggleSelectAll}
-                    />
-                    <span className="text-sm font-normal whitespace-nowrap">Выбрать все</span>
-                  </div>
+                <th className="text-left p-3 w-12">
+                  <Checkbox
+                    checked={selectedIds.length === products.length && products.length > 0}
+                    onCheckedChange={toggleSelectAll}
+                  />
                 </th>
                 <th className="text-left p-3">Фото</th>
                 <th className="text-left p-3">Артикул</th>
