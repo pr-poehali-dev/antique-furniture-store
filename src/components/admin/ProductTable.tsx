@@ -20,9 +20,10 @@ interface ProductTableProps {
   onDelete: (id: number) => void;
   onBulkDelete: (ids: number[]) => void;
   onToggleVisibility: (id: number, visible: boolean) => void;
+  onBulkToggleVisibility: (ids: number[], visible: boolean) => void;
 }
 
-const ProductTable = ({ products, onEdit, onDelete, onBulkDelete, onToggleVisibility }: ProductTableProps) => {
+const ProductTable = ({ products, onEdit, onDelete, onBulkDelete, onToggleVisibility, onBulkToggleVisibility }: ProductTableProps) => {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   const toggleSelect = (id: number) => {
@@ -46,6 +47,18 @@ const ProductTable = ({ products, onEdit, onDelete, onBulkDelete, onToggleVisibi
     setSelectedIds([]);
   };
 
+  const handleBulkShow = () => {
+    if (selectedIds.length === 0) return;
+    onBulkToggleVisibility(selectedIds, true);
+    setSelectedIds([]);
+  };
+
+  const handleBulkHide = () => {
+    if (selectedIds.length === 0) return;
+    onBulkToggleVisibility(selectedIds, false);
+    setSelectedIds([]);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -61,14 +74,34 @@ const ProductTable = ({ products, onEdit, onDelete, onBulkDelete, onToggleVisibi
               {selectedIds.length === products.length && products.length > 0 ? "Снять выбор" : "Выбрать все"}
             </Button>
             {selectedIds.length > 0 && (
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={handleBulkDelete}
-              >
-                <Icon name="Trash2" size={16} className="mr-2" />
-                Удалить выбранные ({selectedIds.length})
-              </Button>
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleBulkShow}
+                  className="border-green-500 text-green-600 hover:bg-green-50"
+                >
+                  <Icon name="Eye" size={16} className="mr-2" />
+                  Показать ({selectedIds.length})
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleBulkHide}
+                  className="border-orange-500 text-orange-600 hover:bg-orange-50"
+                >
+                  <Icon name="EyeOff" size={16} className="mr-2" />
+                  Скрыть ({selectedIds.length})
+                </Button>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={handleBulkDelete}
+                >
+                  <Icon name="Trash2" size={16} className="mr-2" />
+                  Удалить ({selectedIds.length})
+                </Button>
+              </>
             )}
           </div>
         </div>

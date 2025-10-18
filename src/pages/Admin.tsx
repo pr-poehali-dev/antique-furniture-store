@@ -150,6 +150,23 @@ const Admin = () => {
     }
   };
 
+  const handleBulkToggleVisibility = async (ids: number[], visible: boolean) => {
+    try {
+      await Promise.all(
+        ids.map(id => fetch(API_URL, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, is_visible: visible })
+        }))
+      );
+      setProducts(prev => prev.map(p => 
+        ids.includes(p.id) ? { ...p, is_visible: visible } : p
+      ));
+    } catch (error) {
+      console.error('Ошибка массового обновления видимости:', error);
+    }
+  };
+
   if (!isAuthenticated) {
     return <LoginForm onLogin={handleLogin} />;
   }
@@ -202,6 +219,7 @@ const Admin = () => {
           onDelete={handleDelete}
           onBulkDelete={handleBulkDelete}
           onToggleVisibility={handleToggleVisibility}
+          onBulkToggleVisibility={handleBulkToggleVisibility}
         />
       </div>
     </div>
