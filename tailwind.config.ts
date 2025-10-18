@@ -96,13 +96,34 @@ export default {
 				'scale-in': {
 					'0%': { transform: 'scale(0.95)', opacity: '0' },
 					'100%': { transform: 'scale(1)', opacity: '1' }
+				},
+				'dialog-glow': {
+					'0%': { 
+						opacity: '0', 
+						transform: 'scale(0.9) translateY(20px)',
+						boxShadow: '0 0 0 0 hsl(var(--primary) / 0)'
+					},
+					'50%': {
+						boxShadow: '0 25px 50px -12px hsl(var(--primary) / 0.4)'
+					},
+					'100%': { 
+						opacity: '1', 
+						transform: 'scale(1) translateY(0)',
+						boxShadow: '0 25px 50px -12px hsl(var(--primary) / 0.2)'
+					}
+				},
+				'shimmer': {
+					'0%': { backgroundPosition: '-200% 0' },
+					'100%': { backgroundPosition: '200% 0' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.5s ease-out',
-				'scale-in': 'scale-in 0.3s ease-out'
+				'scale-in': 'scale-in 0.3s ease-out',
+				'dialog-glow': 'dialog-glow 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+				'shimmer': 'shimmer 3s linear infinite'
 			}
 		}
 	},
