@@ -67,10 +67,10 @@ const Index = () => {
           <nav className="container mx-auto px-6 py-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <h1 className="text-3xl font-bold bg-gradient-to-br from-primary via-amber-400 to-primary bg-clip-text text-transparent" style={{ fontFamily: 'Cardo, serif' }}>
+                <img src="https://cdn.poehali.dev/files/abd9cfe2-f31a-443d-bc01-bea3c9be053a.png" alt="Архив № 8" className="h-40 w-40 object-contain" />
+                <h1 className="text-3xl font-bold bg-gradient-to-br from-primary via-amber-400 to-primary bg-clip-text text-transparent animate-shimmer" style={{ fontFamily: 'Cardo, serif' }}>
                   Архив №8
                 </h1>
-                <img src="https://cdn.poehali.dev/files/abd9cfe2-f31a-443d-bc01-bea3c9be053a.png" alt="Архив № 8" className="h-20 w-20 object-contain" />
               </div>
               <div className="hidden md:flex items-center gap-2">
                 <button
