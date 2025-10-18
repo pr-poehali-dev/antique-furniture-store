@@ -28,17 +28,21 @@ const ExcelImport = ({ importingExcel, onImportStart, onImportEnd, onImportSucce
 
       console.log('Всего строк в Excel:', jsonData.length);
       console.log('Первая строка данных:', jsonData[0]);
+      console.log('Вторая строка (пример товара):', jsonData[1]);
 
       for (const row of jsonData) {
         try {
           const rowData: any = row;
           
           // Поддержка разных форматов столбцов Excel (__EMPTY, __EMPTY_1, и т.д.)
-          const keys = Object.keys(rowData);
+          const keys = Object.keys(rowData).filter(k => k !== '__rowNum__');
+          console.log('Все ключи строки:', keys);
+          console.log('Значения:', keys.map(k => `${k}: ${rowData[k]}`));
+          
           const photoValue = rowData['Фото (URL)'] || rowData['Фото'] || rowData['photo_url'] || rowData[keys[0]] || '';
           const articleValue = rowData['Артикул'] || rowData['article'] || rowData['__EMPTY'] || rowData[keys[1]] || '';
           const nameValue = rowData['Наименование'] || rowData['name'] || rowData['__EMPTY_1'] || rowData[keys[2]] || '';
-          const rawPrice = rowData['Цена'] || rowData['price'] || rowData['__EMPTY_2'] || rowData[keys[3]] || '0';
+          const rawPrice = rowData['Цена'] || rowData['price'] || rowData['__EMPTY_2'] || rowData['__EMPTY_3'] || rowData[keys[3]] || rowData[keys[4]] || '0';
           
           // Очистка цены от пробелов и замена запятой на точку
           const priceValue = String(rawPrice)
