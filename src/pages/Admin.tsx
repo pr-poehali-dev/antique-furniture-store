@@ -16,11 +16,15 @@ interface Product {
 }
 
 const API_URL = 'https://functions.poehali.dev/60f2060b-ddaf-4a36-adc7-ab19b94dcbf2';
+const ADMIN_PASSWORD = 'Aonddick1';
 
 const Admin = () => {
   const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     photo_url: '',
@@ -30,10 +34,34 @@ const Admin = () => {
   });
 
   useEffect(() => {
-    loadProducts();
+    const savedAuth = sessionStorage.getItem('adminAuth');
+    if (savedAuth === 'true') {
+      setIsAuthenticated(true);
+      loadProducts();
+    }
   }, []);
 
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === ADMIN_PASSWORD) {
+      setIsAuthenticated(true);
+      sessionStorage.setItem('adminAuth', 'true');
+      setPasswordError('');
+      loadProducts();
+    } else {
+      setPasswordError('Неверный пароль');
+      setPassword('');
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    sessionStorage.removeItem('adminAuth');
+    setPassword('');
+  };
+
   const loadProducts = async () => {
+    setLoading(true);
     try {
       const response = await fetch(API_URL);
       const data = await response.json();
@@ -103,6 +131,58 @@ const Admin = () => {
     setFormData({ photo_url: '', article: '', name: '', price: '' });
   };
 
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-3xl font-serif text-center">
+              <Icon name="Lock" className="inline-block mb-2" size={40} />
+              <div>Вход в админ-панель</div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handlePasswordSubmit} className="space-y-4">
+              <div>
+                <Label htmlFor="password">Пароль</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setPasswordError('');
+                  }}
+                  placeholder="Введите пароль"
+                  required
+                  autoFocus
+                />
+                {passwordError && (
+                  <p className="text-sm text-destructive mt-2">{passwordError}</p>
+                )}
+              </div>
+
+              <Button type="submit" className="w-full">
+                <Icon name="LogIn" className="mr-2" size={18} />
+                Войти
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={() => navigate('/')}
+              >
+                <Icon name="Home" className="mr-2" size={18} />
+                На главную
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -116,10 +196,16 @@ const Admin = () => {
       <div className="container mx-auto px-6 max-w-6xl">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-4xl font-serif font-bold text-primary">Админ-панель</h1>
-          <Button variant="outline" onClick={() => navigate('/')}>
-            <Icon name="Home" className="mr-2" size={18} />
-            На главную
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={handleLogout}>
+              <Icon name="LogOut" className="mr-2" size={18} />
+              Выйти
+            </Button>
+            <Button variant="outline" onClick={() => navigate('/')}>
+              <Icon name="Home" className="mr-2" size={18} />
+              На главную
+            </Button>
+          </div>
         </div>
 
         <Card className="mb-12">
