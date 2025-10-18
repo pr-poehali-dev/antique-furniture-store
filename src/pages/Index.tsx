@@ -66,7 +66,7 @@ const Index = () => {
         <nav className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <img src="https://cdn.poehali.dev/projects/56ebf005-4988-4a0c-b185-3a027ae2f02a/files/7d9a5964-af2d-4984-a94d-4824c6f5f0af.jpg" alt="Архив № 8" className="h-16 w-16 object-contain" />
+              <img src="https://cdn.poehali.dev/files/abd9cfe2-f31a-443d-bc01-bea3c9be053a.png" alt="Архив № 8" className="h-16 w-16 object-contain" />
             </div>
             <div className="hidden md:flex items-center gap-8">
               <button
@@ -108,7 +108,7 @@ const Index = () => {
         <section id="home" className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background overflow-hidden">
           
           <div className="container mx-auto px-6 text-center relative z-10 animate-fade-in">
-            <img src="https://cdn.poehali.dev/projects/56ebf005-4988-4a0c-b185-3a027ae2f02a/files/7d9a5964-af2d-4984-a94d-4824c6f5f0af.jpg" alt="Архив № 8" className="h-64 w-64 mx-auto mb-8 object-contain" />
+            <img src="https://cdn.poehali.dev/files/abd9cfe2-f31a-443d-bc01-bea3c9be053a.png" alt="Архив № 8" className="h-64 w-64 mx-auto mb-8 object-contain" />
             <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto font-body">
               Вещи с историей
             </p>
@@ -323,7 +323,7 @@ const Index = () => {
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <img src="https://cdn.poehali.dev/projects/56ebf005-4988-4a0c-b185-3a027ae2f02a/files/7d9a5964-af2d-4984-a94d-4824c6f5f0af.jpg" alt="Архив № 8" className="h-12 w-12 object-contain" />
+                <img src="https://cdn.poehali.dev/files/abd9cfe2-f31a-443d-bc01-bea3c9be053a.png" alt="Архив № 8" className="h-12 w-12 object-contain" />
               </div>
               <p className="text-primary-foreground/80 font-body">
                 Вещи с историей
