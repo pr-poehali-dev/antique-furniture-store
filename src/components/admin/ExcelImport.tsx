@@ -28,14 +28,20 @@ const ExcelImport = ({ importingExcel, onImportStart, onImportEnd, onImportSucce
       for (const row of jsonData) {
         try {
           const rowData: any = row;
+          
+          // Очистка цены от пробелов и замена запятой на точку
+          const priceValue = String(rowData['Цена'] || rowData['price'] || '0')
+            .replace(/\s/g, '')
+            .replace(',', '.');
+          
           const payload = {
-            photo_url: rowData['Фото (URL)'] || rowData['photo_url'] || '',
-            article: rowData['Артикул'] || rowData['article'] || '',
+            photo_url: rowData['Фото (URL)'] || rowData['photo_url'] || rowData['Фото'] || '',
+            article: String(rowData['Артикул'] || rowData['article'] || ''),
             name: rowData['Наименование'] || rowData['name'] || '',
-            price: parseFloat(rowData['Цена'] || rowData['price'] || '0')
+            price: parseFloat(priceValue) || 0
           };
 
-          if (!payload.article || !payload.name) {
+          if (!payload.article || !payload.name || payload.price === 0) {
             errorCount++;
             continue;
           }
