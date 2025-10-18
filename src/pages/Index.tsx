@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -21,6 +21,16 @@ interface Category {
 const Index = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const categories: Category[] = [
     { id: 'all', name: 'Все категории', icon: 'Grid' },
@@ -62,8 +72,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
-      <header className="fixed top-0 w-full z-50 relative" style={{ backgroundImage: 'url(https://cdn.poehali.dev/projects/56ebf005-4988-4a0c-b185-3a027ae2f02a/files/d1331506-d80a-410c-bef0-f2011b114ab6.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        <div className="bg-background/85 backdrop-blur-sm">
+      <header className="fixed top-0 w-full z-50 transition-all duration-300" style={{ backgroundImage: 'url(https://cdn.poehali.dev/projects/56ebf005-4988-4a0c-b185-3a027ae2f02a/files/d1331506-d80a-410c-bef0-f2011b114ab6.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div className={`backdrop-blur-sm transition-colors duration-300 ${isScrolled ? 'bg-background/95' : 'bg-background/85'}`}>
           <nav className="container mx-auto px-6 py-1">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
