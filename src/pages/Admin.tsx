@@ -33,6 +33,7 @@ const Admin = () => {
     price: ''
   });
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     const savedAuth = sessionStorage.getItem('adminAuth');
@@ -225,7 +226,7 @@ const Admin = () => {
                       id="photo_url"
                       value={formData.photo_url}
                       onChange={(e) => setFormData({ ...formData, photo_url: e.target.value })}
-                      placeholder="https://example.com/photo.jpg или загрузите файл"
+                      placeholder="https://example.com/photo.jpg или перетащите файл"
                       className="flex-1"
                     />
                     <Button
@@ -238,6 +239,54 @@ const Admin = () => {
                       {uploadingImage ? 'Загрузка...' : 'Загрузить'}
                     </Button>
                   </div>
+                  
+                  <div
+                    className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                      isDragging ? 'border-primary bg-primary/5' : 'border-muted-foreground/30 hover:border-primary/50'
+                    }`}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      setIsDragging(true);
+                    }}
+                    onDragLeave={() => setIsDragging(false)}
+                    onDrop={async (e) => {
+                      e.preventDefault();
+                      setIsDragging(false);
+                      
+                      const file = e.dataTransfer.files?.[0];
+                      if (!file || !file.type.startsWith('image/')) {
+                        alert('Пожалуйста, загрузите изображение');
+                        return;
+                      }
+
+                      setUploadingImage(true);
+                      try {
+                        const uploadFormData = new FormData();
+                        uploadFormData.append('file', file);
+
+                        const response = await fetch('https://functions.poehali.dev/61f83b29-0bba-4f1d-a1fb-7a8d08e5ca77', {
+                          method: 'POST',
+                          body: uploadFormData
+                        });
+
+                        const data = await response.json();
+                        if (data.url) {
+                          setFormData(prev => ({ ...prev, photo_url: data.url }));
+                        }
+                      } catch (error) {
+                        console.error('Ошибка загрузки:', error);
+                        alert('Не удалось загрузить изображение');
+                      } finally {
+                        setUploadingImage(false);
+                      }
+                    }}
+                  >
+                    <Icon name="ImagePlus" className="mx-auto mb-2" size={40} />
+                    <p className="text-muted-foreground">
+                      {uploadingImage ? 'Загрузка...' : 'Перетащите изображение сюда'}
+                    </p>
+                  </div>
+
                   <input
                     id="file-upload"
                     type="file"
@@ -249,12 +298,12 @@ const Admin = () => {
 
                       setUploadingImage(true);
                       try {
-                        const formData = new FormData();
-                        formData.append('file', file);
+                        const uploadFormData = new FormData();
+                        uploadFormData.append('file', file);
 
                         const response = await fetch('https://functions.poehali.dev/61f83b29-0bba-4f1d-a1fb-7a8d08e5ca77', {
                           method: 'POST',
-                          body: formData
+                          body: uploadFormData
                         });
 
                         const data = await response.json();
@@ -270,12 +319,24 @@ const Admin = () => {
                       }
                     }}
                   />
+                  
                   {formData.photo_url && (
-                    <img
-                      src={formData.photo_url}
-                      alt="Предпросмотр"
-                      className="w-32 h-32 object-cover rounded border"
-                    />
+                    <div className="relative inline-block">
+                      <img
+                        src={formData.photo_url}
+                        alt="Предпросмотр"
+                        className="w-32 h-32 object-cover rounded border"
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full"
+                        onClick={() => setFormData(prev => ({ ...prev, photo_url: '' }))}
+                      >
+                        <Icon name="X" size={14} />
+                      </Button>
+                    </div>
                   )}
                 </div>
               </div>
