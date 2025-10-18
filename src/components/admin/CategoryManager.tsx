@@ -125,10 +125,11 @@ const CategoryManager = ({ categories, onRefresh, apiUrl }: CategoryManagerProps
           body: JSON.stringify({ id: editingId, name: formData.name, icon: formData.icon })
         });
       } else {
+        const generatedId = formData.name.toLowerCase().replace(/[^а-яa-z0-9]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
         await fetch(apiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...formData, sort_order: categories.length })
+          body: JSON.stringify({ id: generatedId, name: formData.name, icon: formData.icon, sort_order: categories.length })
         });
       }
 
@@ -237,20 +238,6 @@ const CategoryManager = ({ categories, onRefresh, apiUrl }: CategoryManagerProps
         {isAdding && (
           <form onSubmit={handleSubmit} className="mb-6 p-4 border rounded-lg bg-muted/20">
             <div className="grid gap-4">
-              {!editingId && (
-                <div>
-                  <Label htmlFor="cat-id">ID категории (латиница) *</Label>
-                  <Input
-                    id="cat-id"
-                    value={formData.id}
-                    onChange={(e) => setFormData({ ...formData, id: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '') })}
-                    placeholder="furniture_sets"
-                    required
-                    disabled={!!editingId}
-                  />
-                </div>
-              )}
-              
               <div>
                 <Label htmlFor="cat-name">Название категории *</Label>
                 <Input
