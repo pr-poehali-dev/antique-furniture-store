@@ -24,6 +24,10 @@ const ExcelImport = ({ importingExcel, onImportStart, onImportEnd, onImportSucce
 
       let successCount = 0;
       let errorCount = 0;
+      const errors: string[] = [];
+
+      console.log('Всего строк в Excel:', jsonData.length);
+      console.log('Первая строка данных:', jsonData[0]);
 
       for (const row of jsonData) {
         try {
@@ -36,13 +40,17 @@ const ExcelImport = ({ importingExcel, onImportStart, onImportEnd, onImportSucce
           
           const payload = {
             photo_url: rowData['Фото (URL)'] || rowData['photo_url'] || rowData['Фото'] || '',
-            article: String(rowData['Артикул'] || rowData['article'] || ''),
-            name: rowData['Наименование'] || rowData['name'] || '',
+            article: String(rowData['Артикул'] || rowData['article'] || '').trim(),
+            name: String(rowData['Наименование'] || rowData['name'] || '').trim(),
             price: parseFloat(priceValue) || 0
           };
 
+          console.log('Обработка строки:', payload);
+
           if (!payload.article || !payload.name || payload.price === 0) {
             errorCount++;
+            errors.push(`Строка пропущена: артикул="${payload.article}", название="${payload.name}", цена=${payload.price}`);
+            console.warn('Пропущена строка:', payload);
             continue;
           }
 
@@ -59,7 +67,14 @@ const ExcelImport = ({ importingExcel, onImportStart, onImportEnd, onImportSucce
         }
       }
 
-      alert(`Импорт завершен!\nУспешно: ${successCount}\nОшибок: ${errorCount}`);
+      console.log('Все ошибки:', errors);
+      
+      let message = `Импорт завершен!\nУспешно: ${successCount}\nОшибок: ${errorCount}`;
+      if (errors.length > 0 && errors.length <= 5) {
+        message += '\n\nПервые ошибки:\n' + errors.slice(0, 5).join('\n');
+      }
+      
+      alert(message);
       onImportSuccess();
     } catch (error) {
       console.error('Ошибка чтения Excel:', error);
