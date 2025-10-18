@@ -1,0 +1,1 @@
+UPDATE categories SET name = 'Все категории' WHERE id = 'all';
