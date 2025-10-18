@@ -33,15 +33,22 @@ const ExcelImport = ({ importingExcel, onImportStart, onImportEnd, onImportSucce
         try {
           const rowData: any = row;
           
+          // Поддержка разных форматов столбцов Excel (__EMPTY, __EMPTY_1, и т.д.)
+          const keys = Object.keys(rowData);
+          const photoValue = rowData['Фото (URL)'] || rowData['Фото'] || rowData['photo_url'] || rowData[keys[0]] || '';
+          const articleValue = rowData['Артикул'] || rowData['article'] || rowData['__EMPTY'] || rowData[keys[1]] || '';
+          const nameValue = rowData['Наименование'] || rowData['name'] || rowData['__EMPTY_1'] || rowData[keys[2]] || '';
+          const rawPrice = rowData['Цена'] || rowData['price'] || rowData['__EMPTY_2'] || rowData[keys[3]] || '0';
+          
           // Очистка цены от пробелов и замена запятой на точку
-          const priceValue = String(rowData['Цена'] || rowData['price'] || '0')
+          const priceValue = String(rawPrice)
             .replace(/\s/g, '')
             .replace(',', '.');
           
           const payload = {
-            photo_url: rowData['Фото (URL)'] || rowData['photo_url'] || rowData['Фото'] || '',
-            article: String(rowData['Артикул'] || rowData['article'] || '').trim(),
-            name: String(rowData['Наименование'] || rowData['name'] || '').trim(),
+            photo_url: String(photoValue).trim(),
+            article: String(articleValue).trim(),
+            name: String(nameValue).trim(),
             price: parseFloat(priceValue) || 0
           };
 
