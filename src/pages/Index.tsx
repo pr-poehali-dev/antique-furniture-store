@@ -68,7 +68,7 @@ const Index = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <img src="https://cdn.poehali.dev/files/abd9cfe2-f31a-443d-bc01-bea3c9be053a.png" alt="Архив № 8" className="h-40 w-40 object-contain" />
-                <h1 className="text-3xl font-bold bg-gradient-to-br from-primary via-amber-400 to-primary bg-clip-text text-transparent animate-shimmer" style={{ fontFamily: 'Cardo, serif' }}>
+                <h1 className="text-3xl font-bold bg-gradient-to-br from-primary via-amber-400 to-primary bg-clip-text text-transparent animate-shimmer" style={{ fontFamily: 'Cardo, serif', textShadow: '0 0 20px rgba(217, 178, 95, 0.5), 0 0 40px rgba(217, 178, 95, 0.3)' }}>
                   Архив №8
                 </h1>
               </div>
