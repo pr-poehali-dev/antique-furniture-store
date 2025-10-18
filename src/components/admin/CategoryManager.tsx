@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -206,7 +206,6 @@ const CategoryManager = ({ categories, onRefresh, apiUrl }: CategoryManagerProps
             })
           )
         );
-        onRefresh();
       } catch (error) {
         console.error('Ошибка обновления порядка:', error);
         setLocalCategories(categories.filter(cat => cat.id !== 'all'));
@@ -216,11 +215,13 @@ const CategoryManager = ({ categories, onRefresh, apiUrl }: CategoryManagerProps
 
   const iconOptions = ['Grid', 'Sofa', 'Box', 'Square', 'Table', 'Armchair', 'Lamp', 'Circle', 'Star', 'Heart'];
 
-  const sortedCategories = localCategories.length > 0 ? localCategories : categories.filter(cat => cat.id !== 'all');
+  useEffect(() => {
+    if (categories.length > 0) {
+      setLocalCategories(categories.filter(cat => cat.id !== 'all'));
+    }
+  }, [categories]);
 
-  if (localCategories.length === 0 && categories.length > 0) {
-    setLocalCategories(categories.filter(cat => cat.id !== 'all'));
-  }
+  const sortedCategories = localCategories;
 
   return (
     <Card className="mb-8">

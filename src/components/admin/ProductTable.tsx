@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -158,13 +158,15 @@ const ProductTable = ({ products, categories, onEdit, onDelete, onBulkDelete, on
     })
   );
 
-  const filteredProducts = filterCategory === 'all' 
-    ? (localProducts.length > 0 ? localProducts : products)
-    : (localProducts.length > 0 ? localProducts : products).filter(p => p.category === filterCategory);
+  useEffect(() => {
+    if (products.length > 0) {
+      setLocalProducts(products);
+    }
+  }, [products]);
 
-  if (localProducts.length === 0 && products.length > 0) {
-    setLocalProducts(products);
-  }
+  const filteredProducts = filterCategory === 'all' 
+    ? localProducts
+    : localProducts.filter(p => p.category === filterCategory);
 
   const toggleSelect = (id: number) => {
     setSelectedIds(prev =>
