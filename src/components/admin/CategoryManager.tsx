@@ -73,10 +73,7 @@ const SortableCategory = ({ category, onEdit, onDelete }: { category: Category; 
           <Icon name="GripVertical" size={20} className="text-muted-foreground" />
         </div>
         <Icon name={category.icon} size={20} className="text-primary" />
-        <div>
-          <div className="font-medium">{category.name}</div>
-          <div className="text-xs text-muted-foreground">ID: {category.id}</div>
-        </div>
+        <div className="font-medium">{category.name}</div>
       </div>
       <div className="flex gap-2">
         <Button
