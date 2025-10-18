@@ -1,0 +1,1 @@
+ALTER TABLE t_p58302981_antique_furniture_st.products_new ADD COLUMN sort_order INTEGER DEFAULT 0;
