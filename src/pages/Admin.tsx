@@ -239,7 +239,7 @@ const Admin = () => {
           })
         )
       );
-      loadProducts();
+      setProducts(updatedProducts);
     } catch (error) {
       console.error('Ошибка обновления порядка:', error);
     }
