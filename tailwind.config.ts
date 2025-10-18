@@ -103,8 +103,15 @@ export default {
 						transform: 'scale(0.9)',
 						boxShadow: '0 0 0 0 hsl(var(--primary) / 0)'
 					},
-					'50%': {
+					'40%': {
+						transform: 'scale(1.02)',
 						boxShadow: '0 25px 50px -12px hsl(var(--primary) / 0.4)'
+					},
+					'60%': {
+						transform: 'scale(0.98)'
+					},
+					'80%': {
+						transform: 'scale(1.01)'
 					},
 					'100%': { 
 						opacity: '1', 
