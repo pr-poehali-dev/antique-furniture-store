@@ -95,35 +95,35 @@ const Index = () => {
               <div className="hidden md:flex items-center gap-2">
                 <button
                   onClick={() => scrollToSection('home')}
-                  className={`text-[22px] px-5 py-2 rounded transition-all duration-300 hover:scale-110 hover:border hover:border-primary ${activeSection === 'home' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
+                  className={`text-[22px] px-5 py-2 rounded transition-all duration-300 hover:scale-110 border border-transparent hover:border-primary ${activeSection === 'home' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
                 >
                   Главная
                 </button>
                 <div className="h-8 w-px bg-gradient-to-b from-transparent via-primary to-transparent"></div>
                 <button
                   onClick={() => scrollToSection('catalog')}
-                  className={`text-[22px] px-5 py-2 rounded transition-all duration-300 hover:scale-110 hover:border hover:border-primary ${activeSection === 'catalog' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
+                  className={`text-[22px] px-5 py-2 rounded transition-all duration-300 hover:scale-110 border border-transparent hover:border-primary ${activeSection === 'catalog' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
                 >
                   Каталог
                 </button>
                 <div className="h-8 w-px bg-gradient-to-b from-transparent via-primary to-transparent"></div>
                 <button
                   onClick={() => scrollToSection('about')}
-                  className={`text-[22px] px-5 py-2 rounded transition-all duration-300 hover:scale-110 hover:border hover:border-primary ${activeSection === 'about' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
+                  className={`text-[22px] px-5 py-2 rounded transition-all duration-300 hover:scale-110 border border-transparent hover:border-primary ${activeSection === 'about' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
                 >
                   О нас
                 </button>
                 <div className="h-8 w-px bg-gradient-to-b from-transparent via-primary to-transparent"></div>
                 <button
                   onClick={() => scrollToSection('services')}
-                  className={`text-[22px] px-5 py-2 rounded transition-all duration-300 hover:scale-110 hover:border hover:border-primary ${activeSection === 'services' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
+                  className={`text-[22px] px-5 py-2 rounded transition-all duration-300 hover:scale-110 border border-transparent hover:border-primary ${activeSection === 'services' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
                 >
                   Услуги
                 </button>
                 <div className="h-8 w-px bg-gradient-to-b from-transparent via-primary to-transparent"></div>
                 <button
                   onClick={() => scrollToSection('contacts')}
-                  className={`text-[22px] px-5 py-2 rounded transition-all duration-300 hover:scale-110 hover:border hover:border-primary ${activeSection === 'contacts' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
+                  className={`text-[22px] px-5 py-2 rounded transition-all duration-300 hover:scale-110 border border-transparent hover:border-primary ${activeSection === 'contacts' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
                 >
                   Контакты
                 </button>
