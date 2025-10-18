@@ -8,6 +8,16 @@ import ProductTable from '@/components/admin/ProductTable';
 import ExcelImport from '@/components/admin/ExcelImport';
 import ExcelImportInfo from '@/components/admin/ExcelImportInfo';
 import CategoryManager from '@/components/admin/CategoryManager';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface Product {
   id: number;
@@ -45,6 +55,8 @@ const Admin = () => {
     category: 'all'
   });
   const [importingExcel, setImportingExcel] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState<number | null>(null);
 
   useEffect(() => {
     const savedAuth = sessionStorage.getItem('adminAuth');
@@ -134,13 +146,21 @@ const Admin = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Удалить товар?')) return;
+    setProductToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!productToDelete) return;
 
     try {
-      await fetch(`${API_URL}?id=${id}`, { method: 'DELETE' });
-      setProducts(prev => prev.filter(p => p.id !== id));
+      await fetch(`${API_URL}?id=${productToDelete}`, { method: 'DELETE' });
+      setProducts(prev => prev.filter(p => p.id !== productToDelete));
     } catch (error) {
       console.error('Ошибка удаления:', error);
+    } finally {
+      setDeleteDialogOpen(false);
+      setProductToDelete(null);
     }
   };
 
@@ -269,6 +289,21 @@ const Admin = () => {
           onBulkToggleVisibility={handleBulkToggleVisibility}
           onCategoryChange={handleCategoryChange}
         />
+
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Вы действительно хотите удалить товар?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Это действие нельзя будет отменить. Товар будет удален безвозвратно.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Нет</AlertDialogCancel>
+              <AlertDialogAction onClick={confirmDelete}>Да</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );

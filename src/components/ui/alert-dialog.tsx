@@ -104,7 +104,11 @@ const AlertDialogAction = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Action
     ref={ref}
-    className={cn(buttonVariants(), className)}
+    className={cn(
+      buttonVariants(),
+      "bg-primary text-primary-foreground hover:bg-primary/90 font-body text-base px-6 py-2.5 min-w-[100px]",
+      className
+    )}
     {...props}
   />
 ))
@@ -118,7 +122,7 @@ const AlertDialogCancel = React.forwardRef<
     ref={ref}
     className={cn(
       buttonVariants({ variant: "outline" }),
-      "mt-2 sm:mt-0",
+      "mt-2 sm:mt-0 border-2 border-primary/30 hover:bg-primary/10 hover:border-primary/50 font-body text-base px-6 py-2.5 min-w-[100px]",
       className
     )}
     {...props}
