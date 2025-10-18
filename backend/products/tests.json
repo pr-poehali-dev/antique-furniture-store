@@ -1,0 +1,22 @@
+{
+  "tests": [
+    {
+      "name": "Получить все товары",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Получить товар по id",
+      "method": "GET",
+      "path": "/?id=1",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "article": "string",
+        "name": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
