@@ -6,10 +6,11 @@ import Icon from '@/components/ui/icon';
 
 interface Product {
   id: number;
-  title: string;
+  photo_url: string;
+  article: string;
+  name: string;
   price: string;
-  image: string;
-  period: string;
+  created_at: string;
 }
 
 interface Category {
@@ -18,11 +19,15 @@ interface Category {
   icon: string;
 }
 
+const API_URL = 'https://functions.poehali.dev/60f2060b-ddaf-4a36-adc7-ab19b94dcbf2';
+
 const Index = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,6 +38,22 @@ const Index = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  const loadProducts = async () => {
+    try {
+      const response = await fetch(API_URL);
+      const data = await response.json();
+      setProducts(data);
+    } catch (error) {
+      console.error('Ошибка загрузки товаров:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const categories: Category[] = [
     { id: 'all', name: 'Все категории', icon: 'Grid' },
     { id: 'sets', name: 'Гарнитуры и комплекты', icon: 'Sofa' },
@@ -41,29 +62,7 @@ const Index = () => {
     { id: 'tables', name: 'Столы, консоли', icon: 'Table' }
   ];
 
-  const products: Product[] = [
-    {
-      id: 1,
-      title: 'Кресло с резьбой',
-      price: '450 000 ₽',
-      image: 'https://cdn.poehali.dev/projects/56ebf005-4988-4a0c-b185-3a027ae2f02a/files/d2ab9fac-4c8d-4066-9e93-e0784f60e7b4.jpg',
-      period: 'XVIII век'
-    },
-    {
-      id: 2,
-      title: 'Китайский шкаф',
-      price: '890 000 ₽',
-      image: 'https://cdn.poehali.dev/projects/56ebf005-4988-4a0c-b185-3a027ae2f02a/files/95fab0c8-7cb7-400a-85ac-8158462dccb3.jpg',
-      period: 'XIX век'
-    },
-    {
-      id: 3,
-      title: 'Кушетка с орнаментом',
-      price: '1 250 000 ₽',
-      image: 'https://cdn.poehali.dev/projects/56ebf005-4988-4a0c-b185-3a027ae2f02a/files/e3ef6b3a-83d9-44f4-b4b6-2e77e9344879.jpg',
-      period: 'XVIII век'
-    }
-  ];
+
 
   const scrollToSection = (sectionId: string) => {
     setActiveSection(sectionId);
@@ -226,40 +225,58 @@ const Index = () => {
               ))}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {products.map((product, index) => (
-                <Card 
-                  key={product.id} 
-                  className="group overflow-hidden border-2 border-border hover:border-primary transition-all duration-300 hover:shadow-2xl animate-scale-in"
-                  style={{ animationDelay: `${index * 150}ms` }}
-                >
-                  <CardContent className="p-0">
-                    <div className="relative overflow-hidden bg-muted">
-                      <img
-                        src={product.image}
-                        alt={product.title}
-                        className="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                      <div className="absolute top-4 right-4 bg-secondary text-secondary-foreground px-4 py-2 rounded-full text-sm font-semibold">
-                        {product.period}
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="text-xl text-muted-foreground">Загрузка товаров...</div>
+              </div>
+            ) : products.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="text-xl text-muted-foreground">Товары не найдены. Добавьте товары через админ-панель.</div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {products.map((product, index) => (
+                  <Card 
+                    key={product.id} 
+                    className="group overflow-hidden border-2 border-border hover:border-primary transition-all duration-300 hover:shadow-2xl animate-scale-in"
+                    style={{ animationDelay: `${index * 150}ms` }}
+                  >
+                    <CardContent className="p-0">
+                      <div className="relative overflow-hidden bg-muted">
+                        {product.photo_url ? (
+                          <img
+                            src={product.photo_url}
+                            alt={product.name}
+                            className="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-110"
+                          />
+                        ) : (
+                          <div className="w-full h-80 flex items-center justify-center bg-muted">
+                            <Icon name="ImageOff" size={64} className="text-muted-foreground" />
+                          </div>
+                        )}
+                        <div className="absolute top-4 right-4 bg-secondary text-secondary-foreground px-4 py-2 rounded-full text-sm font-semibold">
+                          {product.article}
+                        </div>
                       </div>
-                    </div>
-                    <div className="p-6">
-                      <h3 className="text-2xl font-serif font-semibold text-foreground mb-3">
-                        {product.title}
-                      </h3>
-                      <div className="flex items-center justify-between mb-4">
-                        <span className="text-2xl font-bold text-primary">{product.price}</span>
+                      <div className="p-6">
+                        <h3 className="text-2xl font-serif font-semibold text-foreground mb-3">
+                          {product.name}
+                        </h3>
+                        <div className="flex items-center justify-between mb-4">
+                          <span className="text-2xl font-bold text-primary">
+                            {parseFloat(product.price).toLocaleString('ru-RU')} ₽
+                          </span>
+                        </div>
+                        <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground transition-all">
+                          Подробнее
+                          <Icon name="Eye" className="ml-2" size={18} />
+                        </Button>
                       </div>
-                      <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground transition-all">
-                        Подробнее
-                        <Icon name="Eye" className="ml-2" size={18} />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
 
             <div className="text-center mt-12">
               <Button variant="outline" size="lg" className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all">
