@@ -62,9 +62,9 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
-      <header className="fixed top-0 w-full z-50 border-b border-primary/30" style={{ backgroundImage: 'url(https://cdn.poehali.dev/projects/56ebf005-4988-4a0c-b185-3a027ae2f02a/files/d1331506-d80a-410c-bef0-f2011b114ab6.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+      <header className="fixed top-0 w-full z-50 relative" style={{ backgroundImage: 'url(https://cdn.poehali.dev/projects/56ebf005-4988-4a0c-b185-3a027ae2f02a/files/d1331506-d80a-410c-bef0-f2011b114ab6.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <div className="bg-background/85 backdrop-blur-sm">
-          <nav className="container mx-auto px-6 py-2">
+          <nav className="container mx-auto px-6 py-1">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <img src="https://cdn.poehali.dev/files/abd9cfe2-f31a-443d-bc01-bea3c9be053a.png" alt="Архив № 8" className="h-40 w-40 object-contain" />
@@ -111,9 +111,15 @@ const Index = () => {
             </div>
           </nav>
         </div>
+        <div className="absolute bottom-0 left-0 right-0 h-2 bg-primary/80" style={{ 
+          backgroundImage: 'url(https://cdn.poehali.dev/projects/56ebf005-4988-4a0c-b185-3a027ae2f02a/files/d3f84441-5f28-4e05-952c-9f9451305ca4.jpg)', 
+          backgroundSize: 'contain',
+          backgroundRepeat: 'repeat-x',
+          backgroundPosition: 'center'
+        }}></div>
       </header>
 
-      <main className="pt-20">
+      <main className="pt-[180px]">
         <section id="home" className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background overflow-hidden">
           
           <div className="container mx-auto px-6 text-center relative z-10 animate-fade-in">
