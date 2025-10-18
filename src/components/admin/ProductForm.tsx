@@ -168,8 +168,7 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
             <Label htmlFor="price">Цена *</Label>
             <Input
               id="price"
-              type="number"
-              step="0.01"
+              type="text"
               value={formData.price}
               onChange={(e) => onFormDataChange({ ...formData, price: e.target.value })}
               placeholder="5000"
