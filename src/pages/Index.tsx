@@ -132,7 +132,7 @@ const Index = () => {
           </nav>
 
           {isMobileMenuOpen && (
-            <div className="md:hidden bg-background/95 backdrop-blur-sm border-t border-primary/30">
+            <div className="md:hidden bg-background/95 backdrop-blur-sm border-t border-primary/30 animate-slide-down">
               <div className="container mx-auto px-4 py-4 flex flex-col gap-2">
                 <button
                   onClick={() => scrollToSection('home')}
