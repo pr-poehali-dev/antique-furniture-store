@@ -15,6 +15,7 @@ interface Product {
   name: string;
   price: string;
   created_at: string;
+  is_visible?: boolean;
 }
 
 const API_URL = 'https://functions.poehali.dev/60f2060b-ddaf-4a36-adc7-ab19b94dcbf2';
@@ -134,6 +135,21 @@ const Admin = () => {
     setFormData({ photo_url: '', article: '', name: '', price: '' });
   };
 
+  const handleToggleVisibility = async (id: number, visible: boolean) => {
+    try {
+      await fetch(API_URL, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, is_visible: visible })
+      });
+      setProducts(prev => prev.map(p => 
+        p.id === id ? { ...p, is_visible: visible } : p
+      ));
+    } catch (error) {
+      console.error('Ошибка обновления видимости:', error);
+    }
+  };
+
   if (!isAuthenticated) {
     return <LoginForm onLogin={handleLogin} />;
   }
@@ -185,6 +201,7 @@ const Admin = () => {
           onEdit={handleEdit}
           onDelete={handleDelete}
           onBulkDelete={handleBulkDelete}
+          onToggleVisibility={handleToggleVisibility}
         />
       </div>
     </div>

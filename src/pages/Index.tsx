@@ -11,6 +11,7 @@ interface Product {
   name: string;
   price: string;
   created_at: string;
+  is_visible?: boolean;
 }
 
 interface Category {
@@ -46,7 +47,8 @@ const Index = () => {
     try {
       const response = await fetch(API_URL);
       const data = await response.json();
-      setProducts(data);
+      // Фильтруем только видимые товары
+      setProducts(data.filter((p: Product) => p.is_visible !== false));
     } catch (error) {
       console.error('Ошибка загрузки товаров:', error);
     } finally {

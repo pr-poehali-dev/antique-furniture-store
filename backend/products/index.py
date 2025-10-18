@@ -25,7 +25,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             'statusCode': 200,
             'headers': {
                 'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
                 'Access-Control-Allow-Headers': 'Content-Type, X-User-Id',
                 'Access-Control-Max-Age': '86400'
             },
@@ -45,7 +45,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             
             if product_id:
                 cur.execute(
-                    "SELECT id, photo_url, article, name, price, created_at FROM products_new WHERE id = %s",
+                    "SELECT id, photo_url, article, name, price, created_at, is_visible FROM products_new WHERE id = %s",
                     (product_id,)
                 )
                 product = cur.fetchone()
@@ -63,7 +63,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'body': json.dumps(dict(product), default=str)
                 }
             else:
-                cur.execute("SELECT id, photo_url, article, name, price, created_at FROM products_new ORDER BY created_at DESC")
+                cur.execute("SELECT id, photo_url, article, name, price, created_at, is_visible FROM products_new ORDER BY created_at DESC")
                 products = cur.fetchall()
                 
                 return {
@@ -89,7 +89,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 }
             
             cur.execute(
-                "INSERT INTO products_new (photo_url, article, name, price) VALUES (%s, %s, %s, %s) RETURNING id, photo_url, article, name, price, created_at",
+                "INSERT INTO products_new (photo_url, article, name, price) VALUES (%s, %s, %s, %s) RETURNING id, photo_url, article, name, price, created_at, is_visible",
                 (photo_url, article, name, price)
             )
             
@@ -143,9 +143,44 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 }
             
             values.append(product_id)
-            query = f"UPDATE products_new SET {', '.join(updates)} WHERE id = %s RETURNING id, photo_url, article, name, price, created_at"
+            query = f"UPDATE products_new SET {', '.join(updates)} WHERE id = %s RETURNING id, photo_url, article, name, price, created_at, is_visible"
             
             cur.execute(query, values)
+            updated_product = cur.fetchone()
+            
+            if not updated_product:
+                return {
+                    'statusCode': 404,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'Товар не найден'})
+                }
+            
+            conn.commit()
+            
+            return {
+                'statusCode': 200,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps(dict(updated_product), default=str)
+            }
+        
+        # Обновить видимость товара (PATCH)
+        elif method == 'PATCH':
+            body_data = json.loads(event.get('body', '{}'))
+            product_id = body_data.get('id')
+            is_visible = body_data.get('is_visible')
+            
+            if not product_id or is_visible is None:
+                return {
+                    'statusCode': 400,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'Требуется id и is_visible'})
+                }
+            
+            cur.execute(
+                "UPDATE products_new SET is_visible = %s WHERE id = %s RETURNING id, photo_url, article, name, price, created_at, is_visible",
+                (is_visible, product_id)
+            )
+            
             updated_product = cur.fetchone()
             
             if not updated_product:

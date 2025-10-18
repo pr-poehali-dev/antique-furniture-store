@@ -11,6 +11,7 @@ interface Product {
   name: string;
   price: string;
   created_at: string;
+  is_visible?: boolean;
 }
 
 interface ProductTableProps {
@@ -18,9 +19,10 @@ interface ProductTableProps {
   onEdit: (product: Product) => void;
   onDelete: (id: number) => void;
   onBulkDelete: (ids: number[]) => void;
+  onToggleVisibility: (id: number, visible: boolean) => void;
 }
 
-const ProductTable = ({ products, onEdit, onDelete, onBulkDelete }: ProductTableProps) => {
+const ProductTable = ({ products, onEdit, onDelete, onBulkDelete, onToggleVisibility }: ProductTableProps) => {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   const toggleSelect = (id: number) => {
@@ -86,6 +88,7 @@ const ProductTable = ({ products, onEdit, onDelete, onBulkDelete }: ProductTable
                 <th className="text-left p-3">Артикул</th>
                 <th className="text-left p-3">Наименование</th>
                 <th className="text-left p-3">Цена</th>
+                <th className="text-left p-3 w-40">Отображать</th>
                 <th className="text-left p-3">Действия</th>
               </tr>
             </thead>
@@ -121,6 +124,17 @@ const ProductTable = ({ products, onEdit, onDelete, onBulkDelete }: ProductTable
                   <td className="p-3">{product.article}</td>
                   <td className="p-3">{product.name}</td>
                   <td className="p-3">{parseFloat(product.price).toLocaleString('ru-RU')} ₽</td>
+                  <td className="p-3">
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        checked={product.is_visible !== false}
+                        onCheckedChange={(checked) => onToggleVisibility(product.id, checked as boolean)}
+                      />
+                      <span className="text-sm text-muted-foreground">
+                        {product.is_visible !== false ? 'На сайте' : 'Скрыт'}
+                      </span>
+                    </div>
+                  </td>
                   <td className="p-3">
                     <div className="flex gap-2">
                       <Button
