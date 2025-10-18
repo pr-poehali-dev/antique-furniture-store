@@ -200,24 +200,15 @@ const CategoryManager = ({ categories, onRefresh, apiUrl }: CategoryManagerProps
                   <div className="text-xs text-muted-foreground">ID: {category.id}</div>
                 </div>
               </div>
-              <div className="flex gap-2">
+              {category.id !== 'all' && (
                 <Button
-                  variant="outline"
+                  variant="destructive"
                   size="sm"
-                  onClick={() => handleEdit(category)}
+                  onClick={() => handleDelete(category.id)}
                 >
-                  <Icon name="Edit" size={14} />
+                  <Icon name="Trash2" size={14} />
                 </Button>
-                {category.id !== 'all' && (
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDelete(category.id)}
-                  >
-                    <Icon name="Trash2" size={14} />
-                  </Button>
-                )}
-              </div>
+              )}
             </div>
           ))}
         </div>
