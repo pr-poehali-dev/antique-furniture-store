@@ -77,25 +77,8 @@ const ProductTable = ({ products, categories, onEdit, onDelete, onBulkDelete, on
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between">
           <CardTitle className="text-2xl font-serif">Список товаров</CardTitle>
-          <div className="flex items-center gap-2">
-            <Select value={filterCategory} onValueChange={setFilterCategory}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Фильтр по категории" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Все категории</SelectItem>
-                {categories.map(cat => (
-                  <SelectItem key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-        <div className="flex items-center justify-end">
           <div className="flex items-center gap-2">
             <Button
               variant={selectedIds.length === filteredProducts.length && filteredProducts.length > 0 ? "default" : "outline"}
@@ -148,7 +131,21 @@ const ProductTable = ({ products, categories, onEdit, onDelete, onBulkDelete, on
                 <th className="text-left p-3">Фото</th>
                 <th className="text-left p-3">Артикул</th>
                 <th className="text-left p-3">Наименование</th>
-                <th className="text-left p-3">Категория</th>
+                <th className="text-left p-3">
+                  <Select value={filterCategory} onValueChange={setFilterCategory}>
+                    <SelectTrigger className="w-[180px] h-8">
+                      <SelectValue placeholder="Категория" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Все категории</SelectItem>
+                      {categories.map(cat => (
+                        <SelectItem key={cat.id} value={cat.id}>
+                          {cat.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </th>
                 <th className="text-left p-3">Цена</th>
                 <th className="text-left p-3 w-40">Отображать</th>
                 <th className="text-left p-3">Действия</th>
