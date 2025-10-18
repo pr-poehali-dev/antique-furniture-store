@@ -49,9 +49,15 @@ const ExcelImport = ({ importingExcel, onImportStart, onImportEnd, onImportSucce
             .replace(/\s/g, '')
             .replace(',', '.');
           
+          // Формирование URL фото из артикула
+          const articleStr = String(articleValue).trim();
+          const photoUrl = photoValue && String(photoValue).trim() && String(photoValue).trim() !== articleStr
+            ? String(photoValue).trim()
+            : `https://archive8.ru/images/${articleStr}.jpg`;
+          
           const payload = {
-            photo_url: String(photoValue).trim(),
-            article: String(articleValue).trim(),
+            photo_url: photoUrl,
+            article: articleStr,
             name: String(nameValue).trim(),
             price: parseFloat(priceValue) || 0
           };
