@@ -111,11 +111,12 @@ const Index = () => {
             </div>
           </nav>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-2 bg-primary/80" style={{ 
+        <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-r from-primary/60 via-primary to-primary/60" style={{ 
           backgroundImage: 'url(https://cdn.poehali.dev/projects/56ebf005-4988-4a0c-b185-3a027ae2f02a/files/d3f84441-5f28-4e05-952c-9f9451305ca4.jpg)', 
-          backgroundSize: 'contain',
+          backgroundSize: 'auto 100%',
           backgroundRepeat: 'repeat-x',
-          backgroundPosition: 'center'
+          backgroundPosition: 'center',
+          boxShadow: '0 2px 15px rgba(217, 178, 95, 0.6), 0 0 30px rgba(217, 178, 95, 0.4)'
         }}></div>
       </header>
 
