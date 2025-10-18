@@ -32,6 +32,7 @@ const Admin = () => {
     name: '',
     price: ''
   });
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     const savedAuth = sessionStorage.getItem('adminAuth');
@@ -217,13 +218,66 @@ const Admin = () => {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <Label htmlFor="photo_url">Фото (URL)</Label>
-                <Input
-                  id="photo_url"
-                  value={formData.photo_url}
-                  onChange={(e) => setFormData({ ...formData, photo_url: e.target.value })}
-                  placeholder="https://example.com/photo.jpg"
-                />
+                <Label htmlFor="photo_url">Фото</Label>
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <Input
+                      id="photo_url"
+                      value={formData.photo_url}
+                      onChange={(e) => setFormData({ ...formData, photo_url: e.target.value })}
+                      placeholder="https://example.com/photo.jpg или загрузите файл"
+                      className="flex-1"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => document.getElementById('file-upload')?.click()}
+                      disabled={uploadingImage}
+                    >
+                      <Icon name="Upload" className="mr-2" size={18} />
+                      {uploadingImage ? 'Загрузка...' : 'Загрузить'}
+                    </Button>
+                  </div>
+                  <input
+                    id="file-upload"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+
+                      setUploadingImage(true);
+                      try {
+                        const formData = new FormData();
+                        formData.append('file', file);
+
+                        const response = await fetch('https://functions.poehali.dev/61f83b29-0bba-4f1d-a1fb-7a8d08e5ca77', {
+                          method: 'POST',
+                          body: formData
+                        });
+
+                        const data = await response.json();
+                        if (data.url) {
+                          setFormData(prev => ({ ...prev, photo_url: data.url }));
+                        }
+                      } catch (error) {
+                        console.error('Ошибка загрузки:', error);
+                        alert('Не удалось загрузить изображение');
+                      } finally {
+                        setUploadingImage(false);
+                        e.target.value = '';
+                      }
+                    }}
+                  />
+                  {formData.photo_url && (
+                    <img
+                      src={formData.photo_url}
+                      alt="Предпросмотр"
+                      className="w-32 h-32 object-cover rounded border"
+                    />
+                  )}
+                </div>
               </div>
 
               <div>
