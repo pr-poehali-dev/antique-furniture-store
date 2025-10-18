@@ -118,19 +118,25 @@ const CategoryManager = ({ categories, onRefresh, apiUrl }: CategoryManagerProps
     e.preventDefault();
 
     try {
+      let response;
       if (editingId) {
-        await fetch(apiUrl, {
+        response = await fetch(apiUrl, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id: editingId, name: formData.name, icon: formData.icon })
         });
       } else {
         const generatedId = formData.name.toLowerCase().replace(/[^а-яa-z0-9]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
-        await fetch(apiUrl, {
+        response = await fetch(apiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id: generatedId, name: formData.name, icon: formData.icon, sort_order: categories.length })
         });
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Не удалось сохранить категорию');
       }
 
       setFormData({ id: '', name: '', icon: 'Circle' });
@@ -139,7 +145,7 @@ const CategoryManager = ({ categories, onRefresh, apiUrl }: CategoryManagerProps
       onRefresh();
     } catch (error) {
       console.error('Ошибка сохранения категории:', error);
-      alert('Не удалось сохранить категорию');
+      alert(error instanceof Error ? error.message : 'Не удалось сохранить категорию');
     }
   };
 
