@@ -16,6 +16,7 @@ interface Product {
   price: string;
   created_at: string;
   is_visible?: boolean;
+  category?: string;
 }
 
 const API_URL = 'https://functions.poehali.dev/60f2060b-ddaf-4a36-adc7-ab19b94dcbf2';
@@ -30,7 +31,8 @@ const Admin = () => {
     photo_url: '',
     article: '',
     name: '',
-    price: ''
+    price: '',
+    category: 'all'
   });
   const [importingExcel, setImportingExcel] = useState(false);
 
@@ -103,7 +105,8 @@ const Admin = () => {
       photo_url: product.photo_url,
       article: product.article,
       name: product.name,
-      price: product.price
+      price: product.price,
+      category: product.category || 'all'
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -132,7 +135,7 @@ const Admin = () => {
 
   const handleCancel = () => {
     setEditingId(null);
-    setFormData({ photo_url: '', article: '', name: '', price: '' });
+    setFormData({ photo_url: '', article: '', name: '', price: '', category: 'all' });
   };
 
   const handleToggleVisibility = async (id: number, visible: boolean) => {

@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Icon from '@/components/ui/icon';
 
 interface ProductFormData {
@@ -10,6 +11,7 @@ interface ProductFormData {
   article: string;
   name: string;
   price: string;
+  category: string;
 }
 
 interface ProductFormProps {
@@ -173,6 +175,25 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
               placeholder="5000"
               required
             />
+          </div>
+
+          <div>
+            <Label htmlFor="category">Категория *</Label>
+            <Select 
+              value={formData.category} 
+              onValueChange={(value) => onFormDataChange({ ...formData, category: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Выберите категорию" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Все категории</SelectItem>
+                <SelectItem value="sets">Гарнитуры и комплекты</SelectItem>
+                <SelectItem value="storage">Комоды, сундуки, тумбы</SelectItem>
+                <SelectItem value="mirrors">Зеркала, ширмы</SelectItem>
+                <SelectItem value="tables">Столы, консоли</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex gap-3">

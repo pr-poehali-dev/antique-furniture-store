@@ -45,7 +45,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             
             if product_id:
                 cur.execute(
-                    "SELECT id, photo_url, article, name, price, created_at, is_visible FROM products_new WHERE id = %s",
+                    "SELECT id, photo_url, article, name, price, created_at, is_visible, category FROM products_new WHERE id = %s",
                     (product_id,)
                 )
                 product = cur.fetchone()
@@ -63,7 +63,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'body': json.dumps(dict(product), default=str)
                 }
             else:
-                cur.execute("SELECT id, photo_url, article, name, price, created_at, is_visible FROM products_new ORDER BY created_at DESC")
+                cur.execute("SELECT id, photo_url, article, name, price, created_at, is_visible, category FROM products_new ORDER BY created_at DESC")
                 products = cur.fetchall()
                 
                 return {
@@ -80,6 +80,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             article: str = body_data.get('article', '')
             name: str = body_data.get('name', '')
             price: float = body_data.get('price', 0)
+            category: Optional[str] = body_data.get('category', 'all')
             
             if not article or not name or price <= 0:
                 return {
@@ -89,8 +90,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 }
             
             cur.execute(
-                "INSERT INTO products_new (photo_url, article, name, price) VALUES (%s, %s, %s, %s) RETURNING id, photo_url, article, name, price, created_at, is_visible",
-                (photo_url, article, name, price)
+                "INSERT INTO products_new (photo_url, article, name, price, category) VALUES (%s, %s, %s, %s, %s) RETURNING id, photo_url, article, name, price, created_at, is_visible, category",
+                (photo_url, article, name, price, category)
             )
             
             new_product = cur.fetchone()
@@ -118,6 +119,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             article = body_data.get('article')
             name = body_data.get('name')
             price = body_data.get('price')
+            category = body_data.get('category')
             
             updates = []
             values = []
@@ -134,6 +136,9 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             if price is not None and price > 0:
                 updates.append("price = %s")
                 values.append(price)
+            if category:
+                updates.append("category = %s")
+                values.append(category)
             
             if not updates:
                 return {
@@ -143,7 +148,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 }
             
             values.append(product_id)
-            query = f"UPDATE products_new SET {', '.join(updates)} WHERE id = %s RETURNING id, photo_url, article, name, price, created_at, is_visible"
+            query = f"UPDATE products_new SET {', '.join(updates)} WHERE id = %s RETURNING id, photo_url, article, name, price, created_at, is_visible, category"
             
             cur.execute(query, values)
             updated_product = cur.fetchone()
@@ -177,7 +182,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 }
             
             cur.execute(
-                "UPDATE products_new SET is_visible = %s WHERE id = %s RETURNING id, photo_url, article, name, price, created_at, is_visible",
+                "UPDATE products_new SET is_visible = %s WHERE id = %s RETURNING id, photo_url, article, name, price, created_at, is_visible, category",
                 (is_visible, product_id)
             )
             

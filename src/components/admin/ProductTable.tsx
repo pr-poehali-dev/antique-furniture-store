@@ -12,6 +12,7 @@ interface Product {
   price: string;
   created_at: string;
   is_visible?: boolean;
+  category?: string;
 }
 
 interface ProductTableProps {
@@ -120,6 +121,7 @@ const ProductTable = ({ products, onEdit, onDelete, onBulkDelete, onToggleVisibi
                 <th className="text-left p-3">Фото</th>
                 <th className="text-left p-3">Артикул</th>
                 <th className="text-left p-3">Наименование</th>
+                <th className="text-left p-3">Категория</th>
                 <th className="text-left p-3">Цена</th>
                 <th className="text-left p-3 w-40">Отображать</th>
                 <th className="text-left p-3">Действия</th>
@@ -156,6 +158,14 @@ const ProductTable = ({ products, onEdit, onDelete, onBulkDelete, onToggleVisibi
                   </td>
                   <td className="p-3">{product.article}</td>
                   <td className="p-3">{product.name}</td>
+                  <td className="p-3">
+                    <span className="text-xs px-2 py-1 rounded-full bg-muted text-muted-foreground">
+                      {product.category === 'sets' ? 'Гарнитуры' :
+                       product.category === 'storage' ? 'Комоды' :
+                       product.category === 'mirrors' ? 'Зеркала' :
+                       product.category === 'tables' ? 'Столы' : 'Все'}
+                    </span>
+                  </td>
                   <td className="p-3">{parseFloat(product.price).toLocaleString('ru-RU')} ₽</td>
                   <td className="p-3">
                     <div className="flex items-center gap-2">

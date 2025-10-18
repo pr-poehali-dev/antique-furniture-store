@@ -12,6 +12,7 @@ interface Product {
   price: string;
   created_at: string;
   is_visible?: boolean;
+  category?: string;
 }
 
 interface Category {
@@ -64,7 +65,9 @@ const Index = () => {
     { id: 'tables', name: 'Столы, консоли', icon: 'Table' }
   ];
 
-
+  const filteredProducts = selectedCategory === 'all' 
+    ? products 
+    : products.filter(p => p.category === selectedCategory);
 
   const scrollToSection = (sectionId: string) => {
     setActiveSection(sectionId);
@@ -231,13 +234,17 @@ const Index = () => {
               <div className="text-center py-12">
                 <div className="text-xl text-muted-foreground">Загрузка товаров...</div>
               </div>
-            ) : products.length === 0 ? (
+            ) : filteredProducts.length === 0 ? (
               <div className="text-center py-12">
-                <div className="text-xl text-muted-foreground">Товары не найдены. Добавьте товары через админ-панель.</div>
+                <div className="text-xl text-muted-foreground">
+                  {products.length === 0 
+                    ? 'Товары не найдены. Добавьте товары через админ-панель.' 
+                    : 'Нет товаров в этой категории.'}
+                </div>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {products.map((product, index) => (
+                {filteredProducts.map((product, index) => (
                   <Card 
                     key={product.id} 
                     className="group overflow-hidden border-2 border-border hover:border-primary transition-all duration-300 hover:shadow-2xl animate-scale-in"
