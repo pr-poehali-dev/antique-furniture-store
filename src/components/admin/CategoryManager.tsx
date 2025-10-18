@@ -4,6 +4,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface Category {
   id: string;
@@ -26,6 +36,8 @@ const CategoryManager = ({ categories, onRefresh, apiUrl }: CategoryManagerProps
     name: '',
     icon: 'Circle'
   });
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,14 +83,22 @@ const CategoryManager = ({ categories, onRefresh, apiUrl }: CategoryManagerProps
       return;
     }
 
-    if (!confirm('Удалить категорию?')) return;
+    setCategoryToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!categoryToDelete) return;
 
     try {
-      await fetch(`${apiUrl}?id=${id}`, { method: 'DELETE' });
+      await fetch(`${apiUrl}?id=${categoryToDelete}`, { method: 'DELETE' });
       onRefresh();
     } catch (error) {
       console.error('Ошибка удаления:', error);
       alert('Не удалось удалить категорию');
+    } finally {
+      setDeleteDialogOpen(false);
+      setCategoryToDelete(null);
     }
   };
 
@@ -190,6 +210,21 @@ const CategoryManager = ({ categories, onRefresh, apiUrl }: CategoryManagerProps
             </div>
           ))}
         </div>
+
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Вы действительно хотите удалить категорию?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Это действие нельзя будет отменить. Категория будет удалена безвозвратно.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Нет</AlertDialogCancel>
+              <AlertDialogAction onClick={confirmDelete}>Да</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </CardContent>
     </Card>
   );
