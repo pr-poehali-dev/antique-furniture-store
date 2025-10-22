@@ -64,13 +64,20 @@ const Index = () => {
   const loadCategories = async () => {
     try {
       const response = await fetch(CATEGORIES_API_URL);
+      if (!response.ok) {
+        throw new Error('Ошибка загрузки категорий');
+      }
       const data = await response.json();
       setCategories(data);
     } catch (error) {
       console.error('Ошибка загрузки категорий:', error);
-      // Если не удалось загрузить, используем стандартные
+      // Если не удалось загрузить, используем стандартные категории из базы
       setCategories([
-        { id: 'all', name: 'Все категории', icon: 'Grid' }
+        { id: 'all', name: 'Все категории', icon: 'Armchair' },
+        { id: 'mirrors', name: 'Зеркала, ширмы', icon: 'Square' },
+        { id: 'tables', name: 'Столы, консоли', icon: 'Table' },
+        { id: 'storage', name: 'Комоды, сундуки', icon: 'Box' },
+        { id: '7', name: 'Дорогое', icon: 'Circle' }
       ]);
     }
   };
