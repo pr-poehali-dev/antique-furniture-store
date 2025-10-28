@@ -63,12 +63,23 @@ export default function HeaderNewsCarousel() {
         <div className="relative mx-auto" style={{ width: '70%' }}>
           <div className="overflow-hidden rounded-lg" ref={emblaRef}>
             <div className="flex">
-              {news.map((item) => (
+              {news.map((item, index) => (
                 <div key={item.id} className="flex-[0_0_100%] min-w-0">
                   <Link to={`/news/${item.id}`}>
-                    <div className="flex items-center gap-4 p-3 hover:bg-primary/5 transition-colors rounded-lg">
+                    <div 
+                      className={`flex items-center gap-4 p-3 hover:bg-primary/5 transition-all duration-500 rounded-lg ${
+                        index === selectedIndex 
+                          ? 'opacity-100 translate-y-0' 
+                          : 'opacity-0 translate-y-2'
+                      }`}
+                      style={{
+                        transition: 'opacity 0.6s ease-in-out, transform 0.6s ease-in-out'
+                      }}
+                    >
                       {item.image_url && (
-                        <div className="flex-shrink-0 w-16 h-16 rounded overflow-hidden">
+                        <div className={`flex-shrink-0 w-16 h-16 rounded overflow-hidden transition-all duration-500 ${
+                          index === selectedIndex ? 'scale-100' : 'scale-95'
+                        }`}>
                           <img
                             src={item.image_url}
                             alt={item.title}
@@ -77,10 +88,14 @@ export default function HeaderNewsCarousel() {
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-foreground truncate mb-1">
+                        <h3 className={`font-semibold text-foreground truncate mb-1 transition-all duration-500 ${
+                          index === selectedIndex ? 'translate-x-0' : 'translate-x-2'
+                        }`}>
                           {item.title}
                         </h3>
-                        <p className="text-sm text-muted-foreground line-clamp-2">
+                        <p className={`text-sm text-muted-foreground line-clamp-2 transition-all duration-700 ${
+                          index === selectedIndex ? 'translate-x-0 opacity-100' : 'translate-x-3 opacity-0'
+                        }`}>
                           {item.description}
                         </p>
                       </div>
