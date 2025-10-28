@@ -58,46 +58,48 @@ export default function HeaderNewsCarousel() {
   if (news.length === 0) return null;
 
   return (
-    <div className="w-full bg-gradient-to-r from-primary/5 via-background to-primary/5 border-y border-primary/20">
-      <div className="container mx-auto px-4 py-2">
+    <div className="w-full bg-gradient-to-br from-primary/10 via-background to-primary/5 border-b border-primary/20">
+      <div className="container mx-auto px-4 py-8">
         <div className="relative mx-auto" style={{ width: '70%' }}>
-          <div className="overflow-hidden rounded-lg" ref={emblaRef}>
+          <div className="overflow-hidden rounded-xl shadow-2xl" ref={emblaRef}>
             <div className="flex">
               {news.map((item, index) => (
                 <div key={item.id} className="flex-[0_0_100%] min-w-0">
                   <Link to={`/news/${item.id}`}>
                     <div 
-                      className={`flex items-center gap-4 p-3 hover:bg-primary/5 transition-all duration-500 rounded-lg ${
+                      className={`relative bg-card hover:shadow-3xl transition-all duration-500 ${
                         index === selectedIndex 
-                          ? 'opacity-100 translate-y-0' 
-                          : 'opacity-0 translate-y-2'
+                          ? 'opacity-100 scale-100' 
+                          : 'opacity-0 scale-95'
                       }`}
                       style={{
                         transition: 'opacity 0.6s ease-in-out, transform 0.6s ease-in-out'
                       }}
                     >
                       {item.image_url && (
-                        <div className={`flex-shrink-0 w-16 h-16 rounded overflow-hidden transition-all duration-500 ${
-                          index === selectedIndex ? 'scale-100' : 'scale-95'
-                        }`}>
+                        <div className="w-full aspect-[21/9] overflow-hidden">
                           <img
                             src={item.image_url}
                             alt={item.title}
-                            className="w-full h-full object-cover"
+                            className={`w-full h-full object-cover transition-all duration-700 ${
+                              index === selectedIndex ? 'scale-100' : 'scale-110'
+                            }`}
                           />
                         </div>
                       )}
-                      <div className="flex-1 min-w-0">
-                        <h3 className={`font-semibold text-foreground truncate mb-1 transition-all duration-500 ${
-                          index === selectedIndex ? 'translate-x-0' : 'translate-x-2'
-                        }`}>
-                          {item.title}
-                        </h3>
-                        <p className={`text-sm text-muted-foreground line-clamp-2 transition-all duration-700 ${
-                          index === selectedIndex ? 'translate-x-0 opacity-100' : 'translate-x-3 opacity-0'
-                        }`}>
-                          {item.description}
-                        </p>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex items-end">
+                        <div className="p-8 w-full">
+                          <h3 className={`text-3xl md:text-4xl font-bold text-white mb-3 transition-all duration-500 ${
+                            index === selectedIndex ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+                          }`}>
+                            {item.title}
+                          </h3>
+                          <p className={`text-lg text-white/90 line-clamp-2 transition-all duration-700 delay-100 ${
+                            index === selectedIndex ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+                          }`}>
+                            {item.description}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </Link>
@@ -110,31 +112,31 @@ export default function HeaderNewsCarousel() {
             <>
               <button
                 onClick={scrollPrev}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-8 p-1 rounded-full bg-background/80 backdrop-blur-sm border border-primary/30 hover:bg-primary/10 transition-colors"
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 md:-translate-x-16 p-3 rounded-full bg-background/90 backdrop-blur-sm border-2 border-primary/40 hover:bg-primary/20 hover:border-primary transition-all shadow-lg"
                 aria-label="Предыдущая новость"
               >
-                <ChevronLeft className="h-5 w-5 text-primary" />
+                <ChevronLeft className="h-6 w-6 text-primary" />
               </button>
               <button
                 onClick={scrollNext}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-8 p-1 rounded-full bg-background/80 backdrop-blur-sm border border-primary/30 hover:bg-primary/10 transition-colors"
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 md:translate-x-16 p-3 rounded-full bg-background/90 backdrop-blur-sm border-2 border-primary/40 hover:bg-primary/20 hover:border-primary transition-all shadow-lg"
                 aria-label="Следующая новость"
               >
-                <ChevronRight className="h-5 w-5 text-primary" />
+                <ChevronRight className="h-6 w-6 text-primary" />
               </button>
             </>
           )}
 
           {news.length > 1 && (
-            <div className="flex justify-center gap-2 mt-3">
+            <div className="flex justify-center gap-3 mt-6">
               {news.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => scrollTo(index)}
-                  className={`h-2 rounded-full transition-all duration-300 ${
+                  className={`h-3 rounded-full transition-all duration-300 ${
                     index === selectedIndex
-                      ? 'w-8 bg-primary'
-                      : 'w-2 bg-primary/30 hover:bg-primary/50'
+                      ? 'w-12 bg-primary shadow-lg shadow-primary/50'
+                      : 'w-3 bg-primary/30 hover:bg-primary/60'
                   }`}
                   aria-label={`Перейти к новости ${index + 1}`}
                 />
