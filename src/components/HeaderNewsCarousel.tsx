@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import NewsModal from '@/components/NewsModal';
 
@@ -71,7 +70,7 @@ export default function HeaderNewsCarousel() {
     <>
     <div className="w-full bg-gradient-to-br from-primary/10 via-background to-primary/5 border-b border-primary/20">
       <div className="container mx-auto px-4 py-8">
-        <div className="relative mx-auto" style={{ width: '70%' }}>
+        <div className="max-w-5xl mx-auto">
           <div className="overflow-hidden rounded-xl shadow-2xl" ref={emblaRef}>
             <div className="flex">
               {news.map((item, index) => (
@@ -131,38 +130,19 @@ export default function HeaderNewsCarousel() {
           </div>
 
           {news.length > 1 && (
-            <>
-              <button
-                onClick={scrollPrev}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 md:-translate-x-16 p-3 rounded-full bg-background/90 backdrop-blur-sm border-2 border-primary/40 hover:bg-primary/20 hover:border-primary transition-all shadow-lg"
-                aria-label="Предыдущая новость"
-              >
-                <ChevronLeft className="h-6 w-6 text-primary" />
-              </button>
-              <button
-                onClick={scrollNext}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 md:translate-x-16 p-3 rounded-full bg-background/90 backdrop-blur-sm border-2 border-primary/40 hover:bg-primary/20 hover:border-primary transition-all shadow-lg"
-                aria-label="Следующая новость"
-              >
-                <ChevronRight className="h-6 w-6 text-primary" />
-              </button>
-            </>
-          )}
-
-          {news.length > 1 && (
-            <div className="flex flex-col items-center gap-4 mt-6">
-              <div className="flex gap-4 overflow-x-auto pb-2 max-w-full">
+            <div className="flex items-center justify-center gap-4 mt-6">
+              <div className="flex items-center gap-3">
                 {news.map((item, index) => (
                   <button
                     key={index}
                     onClick={() => scrollTo(index)}
-                    className={`flex-shrink-0 w-48 md:w-56 rounded-lg overflow-hidden border-2 transition-all duration-300 ${
-                      index === selectedIndex
-                        ? 'border-primary shadow-lg shadow-primary/50 scale-105'
-                        : 'border-border opacity-70 hover:opacity-100 hover:border-primary/50'
-                    }`}
+                    className={`group relative transition-all duration-300`}
                   >
-                    <div className="aspect-video overflow-hidden bg-muted">
+                    <div className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
+                      index === selectedIndex
+                        ? 'border-primary shadow-lg shadow-primary/50 scale-110'
+                        : 'border-border opacity-60 hover:opacity-100 hover:border-primary/50 hover:scale-105'
+                    }`}>
                       {item.image_url && (
                         <img
                           src={item.image_url}
@@ -171,17 +151,10 @@ export default function HeaderNewsCarousel() {
                         />
                       )}
                     </div>
-                    <div className="p-3 bg-card text-left">
-                      <h4 className="text-sm font-semibold text-foreground line-clamp-2 mb-1">
-                        {item.title}
-                      </h4>
-                      <p className="text-xs text-muted-foreground line-clamp-2">
-                        {item.description}
-                      </p>
-                    </div>
                   </button>
                 ))}
               </div>
+              <div className="h-8 w-px bg-border mx-2"></div>
               <Button
                 variant="outline"
                 size="sm"
