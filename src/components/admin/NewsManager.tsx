@@ -7,6 +7,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 import { toast } from 'sonner';
+import ImageUploader from '@/components/admin/ImageUploader';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -191,15 +192,11 @@ export default function NewsManager() {
               />
             </div>
 
-            <div>
-              <Label htmlFor="image_url">URL изображения</Label>
-              <Input
-                id="image_url"
-                value={formData.image_url}
-                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                placeholder="https://example.com/image.jpg"
-              />
-            </div>
+            <ImageUploader
+              value={formData.image_url}
+              onChange={(url) => setFormData({ ...formData, image_url: url })}
+              label="Изображение для новости"
+            />
 
             <div>
               <Label htmlFor="content">Полный текст новости *</Label>
