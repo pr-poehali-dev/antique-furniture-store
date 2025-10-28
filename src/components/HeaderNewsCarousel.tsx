@@ -150,25 +150,42 @@ export default function HeaderNewsCarousel() {
           )}
 
           {news.length > 1 && (
-            <div className="flex justify-center items-center gap-4 mt-6">
-              <div className="flex gap-3">
-                {news.map((_, index) => (
+            <div className="flex flex-col items-center gap-4 mt-6">
+              <div className="flex gap-4 overflow-x-auto pb-2 max-w-full">
+                {news.map((item, index) => (
                   <button
                     key={index}
                     onClick={() => scrollTo(index)}
-                    className={`h-3 rounded-full transition-all duration-300 ${
+                    className={`flex-shrink-0 w-48 md:w-56 rounded-lg overflow-hidden border-2 transition-all duration-300 ${
                       index === selectedIndex
-                        ? 'w-12 bg-primary shadow-lg shadow-primary/50'
-                        : 'w-3 bg-primary/30 hover:bg-primary/60'
+                        ? 'border-primary shadow-lg shadow-primary/50 scale-105'
+                        : 'border-border opacity-70 hover:opacity-100 hover:border-primary/50'
                     }`}
-                    aria-label={`Перейти к новости ${index + 1}`}
-                  />
+                  >
+                    <div className="aspect-video overflow-hidden bg-muted">
+                      {item.image_url && (
+                        <img
+                          src={item.image_url}
+                          alt={item.title}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                    </div>
+                    <div className="p-3 bg-card text-left">
+                      <h4 className="text-sm font-semibold text-foreground line-clamp-2 mb-1">
+                        {item.title}
+                      </h4>
+                      <p className="text-xs text-muted-foreground line-clamp-2">
+                        {item.description}
+                      </p>
+                    </div>
+                  </button>
                 ))}
               </div>
               <Button
                 variant="outline"
                 size="sm"
-                className="ml-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                 onClick={() => window.location.href = '/news'}
               >
                 Все новости
