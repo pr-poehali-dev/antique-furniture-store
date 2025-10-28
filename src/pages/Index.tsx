@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import Icon from '@/components/ui/icon';
-import NewsCarousel from '@/components/NewsCarousel';
 import HeaderNewsCarousel from '@/components/HeaderNewsCarousel';
 
 interface Product {
@@ -415,8 +414,6 @@ const Index = () => {
             </div>
           </div>
         </section>
-
-        <NewsCarousel />
 
         <section id="contacts" className="py-24 bg-muted/20">
           <div className="container mx-auto px-6">
