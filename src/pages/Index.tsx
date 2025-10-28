@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import Icon from '@/components/ui/icon';
 import NewsCarousel from '@/components/NewsCarousel';
+import HeaderNewsCarousel from '@/components/HeaderNewsCarousel';
 
 interface Product {
   id: number;
@@ -210,6 +211,8 @@ const Index = () => {
           boxShadow: '0 2px 15px rgba(217, 178, 95, 0.6), 0 0 30px rgba(217, 178, 95, 0.4)'
         }}></div>
       </header>
+
+      <HeaderNewsCarousel />
 
       <main className="pt-[100px] md:pt-[180px]">
         <section id="home" className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background overflow-hidden">
