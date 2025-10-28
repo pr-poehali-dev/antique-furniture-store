@@ -15,6 +15,7 @@ const NEWS_API_URL = 'https://functions.poehali.dev/05ddf1e7-d042-40bb-9dd1-7d5c
 
 export default function HeaderNewsCarousel() {
   const [news, setNews] = useState<NewsItem[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { loop: true, duration: 20 },
     [Autoplay({ delay: 7000, stopOnInteraction: false })]
@@ -34,8 +35,24 @@ export default function HeaderNewsCarousel() {
     fetchNews();
   }, []);
 
+  useEffect(() => {
+    if (!emblaApi) return;
+
+    const onSelect = () => {
+      setSelectedIndex(emblaApi.selectedScrollSnap());
+    };
+
+    emblaApi.on('select', onSelect);
+    onSelect();
+
+    return () => {
+      emblaApi.off('select', onSelect);
+    };
+  }, [emblaApi]);
+
   const scrollPrev = () => emblaApi?.scrollPrev();
   const scrollNext = () => emblaApi?.scrollNext();
+  const scrollTo = (index: number) => emblaApi?.scrollTo(index);
 
   if (news.length === 0) return null;
 
@@ -90,6 +107,23 @@ export default function HeaderNewsCarousel() {
                 <ChevronRight className="h-5 w-5 text-primary" />
               </button>
             </>
+          )}
+
+          {news.length > 1 && (
+            <div className="flex justify-center gap-2 mt-3">
+              {news.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => scrollTo(index)}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    index === selectedIndex
+                      ? 'w-8 bg-primary'
+                      : 'w-2 bg-primary/30 hover:bg-primary/50'
+                  }`}
+                  aria-label={`Перейти к новости ${index + 1}`}
+                />
+              ))}
+            </div>
           )}
         </div>
       </div>
