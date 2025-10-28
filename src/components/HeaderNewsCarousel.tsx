@@ -16,9 +16,10 @@ const NEWS_API_URL = 'https://functions.poehali.dev/05ddf1e7-d042-40bb-9dd1-7d5c
 export default function HeaderNewsCarousel() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const autoplay = Autoplay({ delay: 7000, stopOnInteraction: false, stopOnMouseEnter: true });
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { loop: true, duration: 20 },
-    [Autoplay({ delay: 7000, stopOnInteraction: false })]
+    [autoplay]
   );
 
   useEffect(() => {
