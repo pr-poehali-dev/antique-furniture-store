@@ -150,19 +150,29 @@ export default function HeaderNewsCarousel() {
           )}
 
           {news.length > 1 && (
-            <div className="flex justify-center gap-3 mt-6">
-              {news.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => scrollTo(index)}
-                  className={`h-3 rounded-full transition-all duration-300 ${
-                    index === selectedIndex
-                      ? 'w-12 bg-primary shadow-lg shadow-primary/50'
-                      : 'w-3 bg-primary/30 hover:bg-primary/60'
-                  }`}
-                  aria-label={`Перейти к новости ${index + 1}`}
-                />
-              ))}
+            <div className="flex justify-center items-center gap-4 mt-6">
+              <div className="flex gap-3">
+                {news.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => scrollTo(index)}
+                    className={`h-3 rounded-full transition-all duration-300 ${
+                      index === selectedIndex
+                        ? 'w-12 bg-primary shadow-lg shadow-primary/50'
+                        : 'w-3 bg-primary/30 hover:bg-primary/60'
+                    }`}
+                    aria-label={`Перейти к новости ${index + 1}`}
+                  />
+                ))}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="ml-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                onClick={() => window.location.href = '/news'}
+              >
+                Все новости
+              </Button>
             </div>
           )}
         </div>
