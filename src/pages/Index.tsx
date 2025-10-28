@@ -212,9 +212,9 @@ const Index = () => {
         }}></div>
       </header>
 
-      <HeaderNewsCarousel />
-
       <main className="pt-[100px] md:pt-[180px]">
+        <HeaderNewsCarousel />
+
         <section id="home" className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background overflow-hidden">
           
           <div className="container mx-auto px-6 text-center relative z-10 animate-fade-in">
