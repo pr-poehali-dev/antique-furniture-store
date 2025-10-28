@@ -8,6 +8,7 @@ import ProductTable from '@/components/admin/ProductTable';
 import ExcelImport from '@/components/admin/ExcelImport';
 import ExcelImportInfo from '@/components/admin/ExcelImportInfo';
 import CategoryManager from '@/components/admin/CategoryManager';
+import NewsManager from '@/components/admin/NewsManager';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -58,6 +59,7 @@ const Admin = () => {
   const [importingExcel, setImportingExcel] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<'products' | 'news'>('products');
 
   useEffect(() => {
     const savedAuth = sessionStorage.getItem('adminAuth');
@@ -281,33 +283,58 @@ const Admin = () => {
           </div>
         </div>
 
-        <ExcelImportInfo />
+        <div className="bg-card rounded-lg p-2 mb-8 flex gap-2">
+          <Button
+            variant={activeTab === 'products' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('products')}
+            className="flex-1"
+          >
+            <Icon name="Package" className="mr-2" size={18} />
+            Товары
+          </Button>
+          <Button
+            variant={activeTab === 'news' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('news')}
+            className="flex-1"
+          >
+            <Icon name="Newspaper" className="mr-2" size={18} />
+            Новости
+          </Button>
+        </div>
 
-        <CategoryManager
-          categories={categories}
-          onRefresh={loadCategories}
-          apiUrl={CATEGORIES_API_URL}
-        />
+        {activeTab === 'products' ? (
+          <>
+            <ExcelImportInfo />
 
-        <ProductForm
-          formData={formData}
-          editingId={editingId}
-          onSubmit={handleSubmit}
-          onCancel={handleCancel}
-          onFormDataChange={setFormData}
-        />
+            <CategoryManager
+              categories={categories}
+              onRefresh={loadCategories}
+              apiUrl={CATEGORIES_API_URL}
+            />
 
-        <ProductTable
-          products={products}
-          categories={categories}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onBulkDelete={handleBulkDelete}
-          onToggleVisibility={handleToggleVisibility}
-          onBulkToggleVisibility={handleBulkToggleVisibility}
-          onCategoryChange={handleCategoryChange}
-          onSortOrderChange={handleSortOrderChange}
-        />
+            <ProductForm
+              formData={formData}
+              editingId={editingId}
+              onSubmit={handleSubmit}
+              onCancel={handleCancel}
+              onFormDataChange={setFormData}
+            />
+
+            <ProductTable
+              products={products}
+              categories={categories}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onBulkDelete={handleBulkDelete}
+              onToggleVisibility={handleToggleVisibility}
+              onBulkToggleVisibility={handleBulkToggleVisibility}
+              onCategoryChange={handleCategoryChange}
+              onSortOrderChange={handleSortOrderChange}
+            />
+          </>
+        ) : (
+          <NewsManager />
+        )}
 
         <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
           <AlertDialogContent>

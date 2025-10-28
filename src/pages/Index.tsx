@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import Icon from '@/components/ui/icon';
+import NewsCarousel from '@/components/NewsCarousel';
 
 interface Product {
   id: number;
@@ -189,6 +190,14 @@ const Index = () => {
                 >
                   Контакты
                 </button>
+                <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/60 to-transparent"></div>
+                <a
+                  href="/news"
+                  className="text-lg px-4 py-3 rounded text-left transition-all duration-300 hover:bg-primary/10 text-foreground flex items-center gap-2"
+                >
+                  <Icon name="Newspaper" size={20} />
+                  Все новости
+                </a>
               </div>
             </div>
           )}
@@ -403,6 +412,8 @@ const Index = () => {
             </div>
           </div>
         </section>
+
+        <NewsCarousel />
 
         <section id="contacts" className="py-24 bg-muted/20">
           <div className="container mx-auto px-6">
