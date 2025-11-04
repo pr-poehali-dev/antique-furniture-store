@@ -11,7 +11,7 @@ interface ImageUploaderProps {
   label?: string;
 }
 
-const UPLOAD_URL = 'https://cdn.poehali.dev/upload';
+const UPLOAD_URL = 'https://functions.poehali.dev/f26b6393-1447-4b1c-a653-339f6c61fd54';
 
 export default function ImageUploader({ value, onChange, label = 'Изображение' }: ImageUploaderProps) {
   const [uploading, setUploading] = useState(false);
