@@ -48,7 +48,18 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'body': json.dumps({'error': 'No data provided'})
             }
         
-        data = json.loads(body_str)
+        try:
+            data = json.loads(body_str)
+        except json.JSONDecodeError as e:
+            return {
+                'statusCode': 400,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                'body': json.dumps({'error': f'Invalid JSON: {str(e)}', 'body_received': body_str[:100]})
+            }
+        
         file_base64 = data.get('file')
         filename = data.get('filename', 'image.jpg')
         content_type = data.get('contentType', 'image/jpeg')
@@ -60,7 +71,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
-                'body': json.dumps({'error': 'No file data provided'})
+                'body': json.dumps({'error': 'No file data provided', 'data_keys': list(data.keys())})
             }
         
         file_bytes = base64.b64decode(file_base64)
@@ -100,5 +111,5 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             },
-            'body': json.dumps({'error': str(e)})
+            'body': json.dumps({'error': str(e), 'type': type(e).__name__})
         }
