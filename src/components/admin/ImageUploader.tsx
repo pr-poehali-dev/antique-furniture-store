@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import Icon from '@/components/ui/icon';
 import { toast } from 'sonner';
 
@@ -11,12 +12,11 @@ interface ImageUploaderProps {
   label?: string;
 }
 
-const UPLOAD_URL = 'https://functions.poehali.dev/f26b6393-1447-4b1c-a653-339f6c61fd54';
-
 export default function ImageUploader({ value, onChange, label = 'Изображение' }: ImageUploaderProps) {
   const [uploading, setUploading] = useState(false);
+  const [showBase64, setShowBase64] = useState(false);
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -25,8 +25,8 @@ export default function ImageUploader({ value, onChange, label = 'Изображ
       return;
     }
 
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error('Размер файла не должен превышать 10 МБ');
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Размер файла не должен превышать 2 МБ');
       return;
     }
 
@@ -35,40 +35,17 @@ export default function ImageUploader({ value, onChange, label = 'Изображ
     try {
       const reader = new FileReader();
       
-      const base64 = await new Promise<string>((resolve, reject) => {
-        reader.onload = () => {
-          const result = reader.result as string;
-          const base64Data = result.split(',')[1];
-          resolve(base64Data);
-        };
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => resolve(reader.result as string);
         reader.onerror = reject;
         reader.readAsDataURL(file);
       });
 
-      const response = await fetch(UPLOAD_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          file: base64,
-          filename: file.name,
-          contentType: file.type
-        })
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Upload error:', errorText);
-        throw new Error('Ошибка загрузки файла');
-      }
-
-      const data = await response.json();
-      onChange(data.url);
+      onChange(dataUrl);
       toast.success('Изображение загружено');
     } catch (error) {
       console.error('Ошибка загрузки:', error);
-      toast.error('Ошибка загрузки изображения');
+      toast.error('Ошибка чтения файла');
     } finally {
       setUploading(false);
     }
@@ -78,39 +55,59 @@ export default function ImageUploader({ value, onChange, label = 'Изображ
     <div className="space-y-2">
       <Label>{label}</Label>
       
-      <div className="flex gap-2">
-        <Input
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="https://example.com/image.jpg"
-          className="flex-1"
-        />
-        
-        <div className="relative">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileUpload}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            disabled={uploading}
+      <div className="space-y-2">
+        {showBase64 ? (
+          <Textarea
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder="data:image/jpeg;base64,..."
+            className="font-mono text-xs min-h-[100px]"
           />
+        ) : (
+          <Input
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder="https://example.com/image.jpg или выберите файл"
+            className="flex-1"
+          />
+        )}
+        
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileSelect}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+              disabled={uploading}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              disabled={uploading}
+              className="w-full pointer-events-none"
+            >
+              {uploading ? (
+                <>
+                  <Icon name="Loader2" className="mr-2 animate-spin" size={18} />
+                  Загрузка...
+                </>
+              ) : (
+                <>
+                  <Icon name="Upload" className="mr-2" size={18} />
+                  Выбрать файл (до 2 МБ)
+                </>
+              )}
+            </Button>
+          </div>
+          
           <Button
             type="button"
-            variant="outline"
-            disabled={uploading}
-            className="pointer-events-none"
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowBase64(!showBase64)}
           >
-            {uploading ? (
-              <>
-                <Icon name="Loader2" className="mr-2 animate-spin" size={18} />
-                Загрузка...
-              </>
-            ) : (
-              <>
-                <Icon name="Upload" className="mr-2" size={18} />
-                Загрузить
-              </>
-            )}
+            <Icon name={showBase64 ? "Link" : "Code"} size={18} />
           </Button>
         </div>
       </div>
