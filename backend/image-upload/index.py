@@ -37,7 +37,6 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         }
     
     try:
-        # Get file from request body
         body = event.get('body', '')
         is_base64 = event.get('isBase64Encoded', False)
         
@@ -51,15 +50,16 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'body': json.dumps({'error': 'No file provided'})
             }
         
-        # Forward the request to CDN upload endpoint
         headers = {}
         content_type = event.get('headers', {}).get('content-type') or event.get('headers', {}).get('Content-Type')
         if content_type:
             headers['Content-Type'] = content_type
         
-        # Decode base64 if needed
         import base64
-        file_data = base64.b64decode(body) if is_base64 else body.encode('latin1')
+        if is_base64:
+            file_data = base64.b64decode(body)
+        else:
+            file_data = body if isinstance(body, bytes) else body.encode('latin1')
         
         response = requests.post(
             UPLOAD_URL,
@@ -75,10 +75,9 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
-                'body': json.dumps({'error': 'Upload failed'})
+                'body': json.dumps({'error': f'Upload failed: {response.text}'})
             }
         
-        # Return the CDN response
         return {
             'statusCode': 200,
             'headers': {
