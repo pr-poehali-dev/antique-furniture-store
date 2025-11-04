@@ -11,7 +11,7 @@ interface ImageUploaderProps {
   label?: string;
 }
 
-const UPLOAD_URL = 'https://functions.poehali.dev/f26b6393-1447-4b1c-a653-339f6c61fd54';
+const UPLOAD_URL = 'https://cdn.poehali.dev/upload';
 
 export default function ImageUploader({ value, onChange, label = 'Изображение' }: ImageUploaderProps) {
   const [uploading, setUploading] = useState(false);
@@ -33,28 +33,12 @@ export default function ImageUploader({ value, onChange, label = 'Изображ
     setUploading(true);
 
     try {
-      const reader = new FileReader();
-      
-      const base64 = await new Promise<string>((resolve, reject) => {
-        reader.onload = () => {
-          const result = reader.result as string;
-          const base64Data = result.split(',')[1];
-          resolve(base64Data);
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+      const formData = new FormData();
+      formData.append('file', file);
 
       const response = await fetch(UPLOAD_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          file: base64,
-          filename: file.name,
-          contentType: file.type
-        })
+        body: formData
       });
 
       if (!response.ok) {
