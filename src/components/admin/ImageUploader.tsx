@@ -33,12 +33,28 @@ export default function ImageUploader({ value, onChange, label = 'Изображ
     setUploading(true);
 
     try {
-      const formData = new FormData();
-      formData.append('file', file);
+      const reader = new FileReader();
+      
+      const base64 = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => {
+          const result = reader.result as string;
+          const base64Data = result.split(',')[1];
+          resolve(base64Data);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
 
       const response = await fetch(UPLOAD_URL, {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          file: base64,
+          filename: file.name,
+          contentType: file.type
+        })
       });
 
       if (!response.ok) {

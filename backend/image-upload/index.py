@@ -1,11 +1,12 @@
 """
-Business: Proxy image upload to CDN with CORS support
-Args: event with httpMethod, body (multipart form data with image file)
+Business: Upload image to CDN via base64 with CORS support
+Args: event with httpMethod, body (JSON with base64 encoded image)
 Returns: HTTP response with uploaded image URL
 """
 
 import json
 import requests
+import base64
 from typing import Dict, Any
 
 UPLOAD_URL = 'https://cdn.poehali.dev/upload'
@@ -13,7 +14,6 @@ UPLOAD_URL = 'https://cdn.poehali.dev/upload'
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     method: str = event.get('httpMethod', 'GET')
     
-    # Handle CORS OPTIONS request
     if method == 'OPTIONS':
         return {
             'statusCode': 200,
@@ -37,34 +37,39 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         }
     
     try:
-        body = event.get('body', '')
-        is_base64 = event.get('isBase64Encoded', False)
-        
-        if not body:
+        body_str = event.get('body', '')
+        if not body_str:
             return {
                 'statusCode': 400,
                 'headers': {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
-                'body': json.dumps({'error': 'No file provided'})
+                'body': json.dumps({'error': 'No data provided'})
             }
         
-        headers = {}
-        content_type = event.get('headers', {}).get('content-type') or event.get('headers', {}).get('Content-Type')
-        if content_type:
-            headers['Content-Type'] = content_type
+        data = json.loads(body_str)
+        file_base64 = data.get('file')
+        filename = data.get('filename', 'image.jpg')
+        content_type = data.get('contentType', 'image/jpeg')
         
-        import base64
-        if is_base64:
-            file_data = base64.b64decode(body)
-        else:
-            file_data = body if isinstance(body, bytes) else body.encode('latin1')
+        if not file_base64:
+            return {
+                'statusCode': 400,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                'body': json.dumps({'error': 'No file data provided'})
+            }
+        
+        file_bytes = base64.b64decode(file_base64)
+        
+        files = {'file': (filename, file_bytes, content_type)}
         
         response = requests.post(
             UPLOAD_URL,
-            data=file_data,
-            headers=headers,
+            files=files,
             timeout=30
         )
         
