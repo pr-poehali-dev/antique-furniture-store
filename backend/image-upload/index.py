@@ -20,7 +20,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             'headers': {
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'POST, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Headers': 'Content-Type, content-type',
                 'Access-Control-Max-Age': '86400'
             },
             'body': ''
@@ -38,6 +38,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     
     try:
         body_str = event.get('body', '')
+        is_base64_encoded = event.get('isBase64Encoded', False)
+        
         if not body_str:
             return {
                 'statusCode': 400,
@@ -48,6 +50,9 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'body': json.dumps({'error': 'No data provided'})
             }
         
+        if is_base64_encoded:
+            body_str = base64.b64decode(body_str).decode('utf-8')
+        
         try:
             data = json.loads(body_str)
         except json.JSONDecodeError as e:
@@ -57,7 +62,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
-                'body': json.dumps({'error': f'Invalid JSON: {str(e)}', 'body_received': body_str[:100]})
+                'body': json.dumps({'error': f'Invalid JSON: {str(e)}', 'body_sample': body_str[:100], 'was_base64': is_base64_encoded})
             }
         
         file_base64 = data.get('file')

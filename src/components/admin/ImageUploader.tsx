@@ -48,7 +48,7 @@ export default function ImageUploader({ value, onChange, label = 'Изображ
       const response = await fetch(UPLOAD_URL, {
         method: 'POST',
         headers: {
-          'content-type': 'text/plain',
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           file: base64,
