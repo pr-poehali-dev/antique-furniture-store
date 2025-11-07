@@ -358,12 +358,22 @@ const Index = () => {
                   </div>
                 </div>
               </div>
-              <div className="relative">
+              <div className="space-y-6">
                 <div className="aspect-square rounded-lg overflow-hidden border-2 border-primary/20">
                   <img 
                     src="https://cdn.poehali.dev/files/478a911a-d0b3-4dde-ba70-1be8f4dd3d6b.jpg" 
                     alt="Интерьер салона Архив № 8" 
                     className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="rounded-lg overflow-hidden border-2 border-primary/20 h-[400px]">
+                  <iframe 
+                    src="https://yandex.ru/map-widget/v1/?ll=37.637045%2C55.739469&z=17&l=map&pt=37.637045,55.739469,pm2rdm"
+                    width="100%" 
+                    height="100%" 
+                    frameBorder="0"
+                    allowFullScreen
+                    style={{ position: 'relative' }}
                   />
                 </div>
               </div>
