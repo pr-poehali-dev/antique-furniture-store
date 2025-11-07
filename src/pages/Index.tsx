@@ -368,7 +368,7 @@ const Index = () => {
                 </div>
                 <div className="rounded-lg overflow-hidden border-2 border-primary/20 h-[400px]">
                   <iframe 
-                    src="https://yandex.ru/map-widget/v1/?ll=37.637045%2C55.739469&z=17&l=map&pt=37.637045,55.739469,pm2rdm"
+                    src="https://yandex.ru/map-widget/v1/?ll=37.640892%2C55.736893&z=17&l=map&pt=37.640892,55.736893,pm2rdm"
                     width="100%" 
                     height="100%" 
                     frameBorder="0"
