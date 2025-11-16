@@ -23,6 +23,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'Access-Control-Allow-Headers': 'Content-Type, content-type',
                 'Access-Control-Max-Age': '86400'
             },
+            'isBase64Encoded': False,
             'body': ''
         }
     
@@ -33,6 +34,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             },
+            'isBase64Encoded': False,
             'body': json.dumps({'error': 'Method not allowed'})
         }
     
@@ -47,6 +49,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
+                'isBase64Encoded': False,
                 'body': json.dumps({'error': 'No data provided'})
             }
         
@@ -62,6 +65,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
+                'isBase64Encoded': False,
                 'body': json.dumps({'error': f'Invalid JSON: {str(e)}', 'body_sample': body_str[:100], 'was_base64': is_base64_encoded})
             }
         
@@ -76,6 +80,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
+                'isBase64Encoded': False,
                 'body': json.dumps({'error': 'No file data provided', 'data_keys': list(data.keys())})
             }
         
@@ -96,6 +101,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
+                'isBase64Encoded': False,
                 'body': json.dumps({'error': f'Upload failed: {response.text}'})
             }
         
@@ -116,5 +122,6 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             },
+            'isBase64Encoded': False,
             'body': json.dumps({'error': str(e), 'type': type(e).__name__})
         }
