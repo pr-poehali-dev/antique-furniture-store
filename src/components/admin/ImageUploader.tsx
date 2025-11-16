@@ -25,8 +25,8 @@ export default function ImageUploader({ value, onChange, label = 'Изображ
       return;
     }
 
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error('Размер файла не должен превышать 2 МБ');
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Размер файла не должен превышать 5 МБ');
       return;
     }
 
@@ -41,11 +41,33 @@ export default function ImageUploader({ value, onChange, label = 'Изображ
         reader.readAsDataURL(file);
       });
 
-      onChange(dataUrl);
-      toast.success('Изображение загружено');
+      const base64Data = dataUrl.split(',')[1];
+
+      const response = await fetch('https://functions.poehali.dev/f26b6393-1447-4b1c-a653-339f6c61fd54', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          file: base64Data,
+          filename: file.name,
+          contentType: file.type
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Ошибка загрузки на сервер');
+      }
+
+      const result = await response.json();
+      const imageUrl = result.url;
+
+      onChange(imageUrl);
+      toast.success('Изображение успешно загружено на CDN');
     } catch (error) {
       console.error('Ошибка загрузки:', error);
-      toast.error('Ошибка чтения файла');
+      toast.error(error instanceof Error ? error.message : 'Ошибка загрузки файла');
     } finally {
       setUploading(false);
     }
@@ -95,7 +117,7 @@ export default function ImageUploader({ value, onChange, label = 'Изображ
               ) : (
                 <>
                   <Icon name="Upload" className="mr-2" size={18} />
-                  Выбрать файл (до 2 МБ)
+                  Выбрать файл (до 5 МБ)
                 </>
               )}
             </Button>
