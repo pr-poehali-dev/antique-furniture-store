@@ -4,6 +4,19 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import Icon from '@/components/ui/icon';
 import HeaderNewsCarousel from '@/components/HeaderNewsCarousel';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
 
 interface Product {
   id: number;
@@ -15,6 +28,8 @@ interface Product {
   is_visible?: boolean;
   category?: string;
   sort_order?: number;
+  description?: string;
+  images?: string[];
 }
 
 interface Category {
@@ -34,6 +49,8 @@ const Index = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -275,8 +292,12 @@ const Index = () => {
                 {filteredProducts.map((product, index) => (
                   <Card 
                     key={product.id} 
-                    className="group overflow-hidden border-2 border-border hover:border-primary transition-all duration-300 hover:shadow-2xl animate-scale-in"
+                    className="group overflow-hidden border-2 border-border hover:border-primary transition-all duration-300 hover:shadow-2xl animate-scale-in cursor-pointer"
                     style={{ animationDelay: `${index * 150}ms` }}
+                    onClick={() => {
+                      setSelectedProduct(product);
+                      setIsDialogOpen(true);
+                    }}
                   >
                     <CardContent className="p-0">
                       <div className="relative overflow-hidden bg-muted">
@@ -307,7 +328,14 @@ const Index = () => {
                             {parseFloat(product.price).toLocaleString('ru-RU')} ₽
                           </span>
                         </div>
-                        <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground transition-all">
+                        <Button 
+                          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground transition-all"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedProduct(product);
+                            setIsDialogOpen(true);
+                          }}
+                        >
                           Подробнее
                           <Icon name="Eye" className="ml-2" size={18} />
                         </Button>
@@ -502,6 +530,87 @@ const Index = () => {
           </div>
         </div>
       </footer>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-3xl font-serif text-primary">
+              {selectedProduct?.name}
+            </DialogTitle>
+          </DialogHeader>
+          
+          {selectedProduct && (
+            <div className="space-y-6">
+              <Carousel className="w-full">
+                <CarouselContent>
+                  {selectedProduct.images && selectedProduct.images.length > 0 ? (
+                    selectedProduct.images.map((image, index) => (
+                      <CarouselItem key={index}>
+                        <div className="aspect-square overflow-hidden rounded-lg">
+                          <img
+                            src={image}
+                            alt={`${selectedProduct.name} - фото ${index + 1}`}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23f0f0f0" width="400" height="400"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EФото недоступно%3C/text%3E%3C/svg%3E';
+                            }}
+                          />
+                        </div>
+                      </CarouselItem>
+                    ))
+                  ) : (
+                    <CarouselItem>
+                      <div className="aspect-square overflow-hidden rounded-lg">
+                        <img
+                          src={selectedProduct.photo_url}
+                          alt={selectedProduct.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23f0f0f0" width="400" height="400"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EФото недоступно%3C/text%3E%3C/svg%3E';
+                          }}
+                        />
+                      </div>
+                    </CarouselItem>
+                  )}
+                </CarouselContent>
+                {selectedProduct.images && selectedProduct.images.length > 1 && (
+                  <>
+                    <CarouselPrevious className="left-4" />
+                    <CarouselNext className="right-4" />
+                  </>
+                )}
+              </Carousel>
+
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    Артикул: {selectedProduct.article}
+                  </span>
+                  <span className="text-3xl font-bold text-primary">
+                    {parseFloat(selectedProduct.price).toLocaleString('ru-RU')} ₽
+                  </span>
+                </div>
+
+                {selectedProduct.description && (
+                  <div className="prose max-w-none">
+                    <p className="text-muted-foreground leading-relaxed">
+                      {selectedProduct.description}
+                    </p>
+                  </div>
+                )}
+
+                <Button 
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                  size="lg"
+                >
+                  Подробнее
+                  <Icon name="ArrowRight" className="ml-2" size={20} />
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
