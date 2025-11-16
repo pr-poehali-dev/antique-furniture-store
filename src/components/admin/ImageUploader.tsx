@@ -6,6 +6,8 @@ import { Textarea } from '@/components/ui/textarea';
 import Icon from '@/components/ui/icon';
 import { toast } from 'sonner';
 
+const IMAGE_UPLOAD_URL = 'https://functions.poehali.dev/f26b6393-1447-4b1c-a653-339f6c61fd54';
+
 interface ImageUploaderProps {
   value: string;
   onChange: (url: string) => void;
@@ -43,7 +45,7 @@ export default function ImageUploader({ value, onChange, label = 'Изображ
 
       const base64Data = dataUrl.split(',')[1];
 
-      const response = await fetch('https://functions.poehali.dev/f26b6393-1447-4b1c-a653-339f6c61fd54', {
+      const response = await fetch(IMAGE_UPLOAD_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

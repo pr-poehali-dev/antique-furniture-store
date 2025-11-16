@@ -27,15 +27,44 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
   const [isDragging, setIsDragging] = useState(false);
 
   const handleImageUpload = async (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      alert('Пожалуйста, загрузите изображение');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Размер файла не должен превышать 5 МБ');
+      return;
+    }
+
     setUploadingImage(true);
     try {
-      const uploadFormData = new FormData();
-      uploadFormData.append('file', file);
-
-      const response = await fetch('https://functions.poehali.dev/61f83b29-0bba-4f1d-a1fb-7a8d08e5ca77', {
-        method: 'POST',
-        body: uploadFormData
+      const reader = new FileReader();
+      
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
       });
+
+      const base64Data = dataUrl.split(',')[1];
+
+      const response = await fetch('https://functions.poehali.dev/f26b6393-1447-4b1c-a653-339f6c61fd54', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          file: base64Data,
+          filename: file.name,
+          contentType: file.type
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Ошибка загрузки на сервер');
+      }
 
       const data = await response.json();
       if (data.url) {
@@ -43,7 +72,7 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
       }
     } catch (error) {
       console.error('Ошибка загрузки:', error);
-      alert('Не удалось загрузить изображение');
+      alert(error instanceof Error ? error.message : 'Не удалось загрузить изображение');
     } finally {
       setUploadingImage(false);
     }
