@@ -85,14 +85,18 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             }
         
         file_bytes = base64.b64decode(file_base64)
+        print(f"📦 File decoded: {len(file_bytes)} bytes, filename: {filename}, type: {content_type}")
         
         files = {'file': (filename, file_bytes, content_type)}
         
+        print(f"📤 Sending to CDN: {UPLOAD_URL}")
         response = requests.post(
             UPLOAD_URL,
             files=files,
             timeout=30
         )
+        
+        print(f"📥 CDN response: status={response.status_code}, body={response.text[:200]}")
         
         if response.status_code != 200:
             return {
@@ -102,7 +106,11 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'Access-Control-Allow-Origin': '*'
                 },
                 'isBase64Encoded': False,
-                'body': json.dumps({'error': f'Upload failed: {response.text}'})
+                'body': json.dumps({
+                    'error': f'CDN error {response.status_code}: {response.text}',
+                    'cdn_status': response.status_code,
+                    'cdn_response': response.text[:500]
+                })
             }
         
         return {
