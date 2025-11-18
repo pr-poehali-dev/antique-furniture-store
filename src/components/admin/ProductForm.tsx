@@ -38,6 +38,12 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
     }
 
     setUploadingImage(true);
+    console.log('🚀 Начинаю загрузку файла:', {
+      name: file.name,
+      size: file.size,
+      type: file.type
+    });
+
     try {
       const reader = new FileReader();
       
@@ -48,32 +54,58 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
       });
 
       const base64Data = dataUrl.split(',')[1];
+      console.log('📄 Base64 готов, длина:', base64Data.length);
 
+      const requestBody = {
+        file: base64Data,
+        filename: file.name,
+        contentType: file.type
+      };
+      
+      console.log('📤 Отправляю запрос на сервер...');
       const response = await fetch('https://functions.poehali.dev/f26b6393-1447-4b1c-a653-339f6c61fd54', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          file: base64Data,
-          filename: file.name,
-          contentType: file.type
-        })
+        body: JSON.stringify(requestBody)
       });
 
+      console.log('📥 Ответ получен:', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok
+      });
+
+      const responseText = await response.text();
+      console.log('📄 Тело ответа:', responseText);
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Ошибка загрузки на сервер');
+        let errorMsg = 'Ошибка загрузки на сервер';
+        try {
+          const errorData = JSON.parse(responseText);
+          errorMsg = errorData.error || errorMsg;
+        } catch (e) {
+          errorMsg = responseText || errorMsg;
+        }
+        throw new Error(errorMsg);
       }
 
-      const data = await response.json();
+      const data = JSON.parse(responseText);
+      console.log('✅ Данные распарсены:', data);
+      
       if (data.url) {
+        console.log('🎉 URL получен, обновляю форму:', data.url);
         onFormDataChange({ ...formData, photo_url: data.url });
+      } else {
+        console.error('❌ URL не найден в ответе');
+        throw new Error('URL не получен от сервера');
       }
     } catch (error) {
-      console.error('Ошибка загрузки:', error);
+      console.error('❌ Ошибка загрузки:', error);
       alert(error instanceof Error ? error.message : 'Не удалось загрузить изображение');
     } finally {
+      console.log('🏁 Загрузка завершена');
       setUploadingImage(false);
     }
   };
