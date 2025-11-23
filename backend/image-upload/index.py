@@ -1,15 +1,12 @@
 """
-Business: Upload image to CDN via base64 with CORS support
+Business: Convert uploaded image to data URL (base64) for storage
 Args: event with httpMethod, body (JSON with base64 encoded image)
-Returns: HTTP response with uploaded image URL
+Returns: HTTP response with data URL
 """
 
 import json
-import requests
 import base64
 from typing import Dict, Any
-
-UPLOAD_URL = 'https://cdn.poehali.dev/upload'
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     method: str = event.get('httpMethod', 'GET')
@@ -84,34 +81,18 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'body': json.dumps({'error': 'No file data provided', 'data_keys': list(data.keys())})
             }
         
-        file_bytes = base64.b64decode(file_base64)
-        print(f"📦 File decoded: {len(file_bytes)} bytes, filename: {filename}, type: {content_type}")
+        print(f"📦 File received: filename={filename}, type={content_type}, base64_length={len(file_base64)}")
         
-        files = {'file': (filename, file_bytes, content_type)}
+        data_url = f"data:{content_type};base64,{file_base64}"
         
-        print(f"📤 Sending to CDN: {UPLOAD_URL}")
-        response = requests.post(
-            UPLOAD_URL,
-            files=files,
-            timeout=30
-        )
+        result = {
+            'url': data_url,
+            'filename': filename,
+            'content_type': content_type,
+            'size_kb': len(file_base64) // 1024
+        }
         
-        print(f"📥 CDN response: status={response.status_code}, body={response.text[:200]}")
-        
-        if response.status_code != 200:
-            return {
-                'statusCode': response.status_code,
-                'headers': {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
-                },
-                'isBase64Encoded': False,
-                'body': json.dumps({
-                    'error': f'CDN error {response.status_code}: {response.text}',
-                    'cdn_status': response.status_code,
-                    'cdn_response': response.text[:500]
-                })
-            }
+        print(f"✅ Image ready as data URL, size: {result['size_kb']} KB")
         
         return {
             'statusCode': 200,
@@ -120,7 +101,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'Access-Control-Allow-Origin': '*'
             },
             'isBase64Encoded': False,
-            'body': response.text
+            'body': json.dumps(result)
         }
         
     except Exception as e:
