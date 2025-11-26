@@ -28,34 +28,73 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
   const [uploadingImage, setUploadingImage] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
+  const compressImage = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+        const maxSize = 1920;
+        
+        if (width > maxSize || height > maxSize) {
+          if (width > height) {
+            height = (height * maxSize) / width;
+            width = maxSize;
+          } else {
+            width = (width * maxSize) / height;
+            height = maxSize;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        ctx?.drawImage(img, 0, 0, width, height);
+        
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              reject(new Error('Ошибка сжатия изображения'));
+              return;
+            }
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          },
+          'image/jpeg',
+          0.85
+        );
+      };
+      
+      img.onerror = () => reject(new Error('Ошибка загрузки изображения'));
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
   const handleImageUpload = async (file: File) => {
     if (!file.type.startsWith('image/')) {
       alert('Пожалуйста, загрузите изображение');
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Размер файла не должен превышать 5 МБ');
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Размер файла не должен превышать 10 МБ');
       return;
     }
 
     setUploadingImage(true);
 
     try {
-      const reader = new FileReader();
-      
-      const dataUrl = await new Promise<string>((resolve, reject) => {
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-
+      const dataUrl = await compressImage(file);
       const base64Data = dataUrl.split(',')[1];
 
       const requestBody = {
         file: base64Data,
         filename: file.name,
-        contentType: file.type
+        contentType: 'image/jpeg'
       };
       
       const response = await fetch('https://functions.poehali.dev/f26b6393-1447-4b1c-a653-339f6c61fd54', {
