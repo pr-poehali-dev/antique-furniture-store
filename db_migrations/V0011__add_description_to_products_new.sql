@@ -1,0 +1,1 @@
+ALTER TABLE products_new ADD COLUMN IF NOT EXISTS description TEXT;
