@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import Icon from '@/components/ui/icon';
 import {
   DndContext,
@@ -53,7 +54,7 @@ interface ProductTableProps {
   onSortOrderChange: (products: Product[]) => void;
 }
 
-const SortableProductRow = ({ product, categories, selectedIds, onToggleSelect, onEdit, onDelete, onToggleVisibility, onCategoryChange }: any) => {
+const SortableProductRow = ({ product, categories, selectedIds, onToggleSelect, onEdit, onDelete, onToggleVisibility, onCategoryChange, visibleColumns }: any) => {
   const {
     attributes,
     listeners,
@@ -82,62 +83,70 @@ const SortableProductRow = ({ product, categories, selectedIds, onToggleSelect, 
           onCheckedChange={() => onToggleSelect(product.id)}
         />
       </td>
-      <td className="p-2">
-        {product.photo_url ? (
-          <img
-            src={product.photo_url}
-            alt={product.name}
-            className="w-12 h-12 object-cover rounded border border-border"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = 'none';
-              const parent = (e.target as HTMLImageElement).parentElement;
-              if (parent) {
-                parent.innerHTML = '<div class="w-12 h-12 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">Нет фото</div>';
-              }
-            }}
-          />
-        ) : (
-          <div className="w-12 h-12 bg-muted rounded flex items-center justify-center">
-            <Icon name="ImageOff" size={16} className="text-muted-foreground" />
+      {visibleColumns.photo && (
+        <td className="p-2">
+          {product.photo_url ? (
+            <img
+              src={product.photo_url}
+              alt={product.name}
+              className="w-12 h-12 object-cover rounded border border-border"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none';
+                const parent = (e.target as HTMLImageElement).parentElement;
+                if (parent) {
+                  parent.innerHTML = '<div class="w-12 h-12 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">Нет фото</div>';
+                }
+              }}
+            />
+          ) : (
+            <div className="w-12 h-12 bg-muted rounded flex items-center justify-center">
+              <Icon name="ImageOff" size={16} className="text-muted-foreground" />
+            </div>
+          )}
+        </td>
+      )}
+      {visibleColumns.article && <td className="p-2 text-sm">{product.article}</td>}
+      {visibleColumns.name && <td className="p-2 text-sm max-w-[150px] truncate" title={product.name}>{product.name}</td>}
+      {visibleColumns.category && (
+        <td className="p-2">
+          <Select 
+            value={product.category || 'all'} 
+            onValueChange={(value) => onCategoryChange(product.id, value)}
+          >
+            <SelectTrigger className="w-[140px] h-8 text-xs">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((cat: Category) => (
+                <SelectItem key={cat.id} value={cat.id}>
+                  {cat.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </td>
+      )}
+      {visibleColumns.price && <td className="p-2 text-sm whitespace-nowrap">{parseFloat(product.price).toLocaleString('ru-RU')} ₽</td>}
+      {visibleColumns.description && (
+        <td className="p-2 max-w-[120px]">
+          <div className="text-xs text-muted-foreground truncate" title={product.description || ''}>
+            {product.description || '—'}
           </div>
-        )}
-      </td>
-      <td className="p-2 text-sm">{product.article}</td>
-      <td className="p-2 text-sm max-w-[150px] truncate" title={product.name}>{product.name}</td>
-      <td className="p-2">
-        <Select 
-          value={product.category || 'all'} 
-          onValueChange={(value) => onCategoryChange(product.id, value)}
-        >
-          <SelectTrigger className="w-[140px] h-8 text-xs">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {categories.map((cat: Category) => (
-              <SelectItem key={cat.id} value={cat.id}>
-                {cat.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </td>
-      <td className="p-2 text-sm whitespace-nowrap">{parseFloat(product.price).toLocaleString('ru-RU')} ₽</td>
-      <td className="p-2 max-w-[120px]">
-        <div className="text-xs text-muted-foreground truncate" title={product.description || ''}>
-          {product.description || '—'}
-        </div>
-      </td>
-      <td className="p-2">
-        <div className="flex items-center gap-1">
-          <Checkbox
-            checked={product.is_visible !== false}
-            onCheckedChange={(checked) => onToggleVisibility(product.id, checked as boolean)}
-          />
-          <span className="text-xs text-muted-foreground">
-            {product.is_visible !== false ? 'На сайте' : 'Скрыт'}
-          </span>
-        </div>
-      </td>
+        </td>
+      )}
+      {visibleColumns.visibility && (
+        <td className="p-2">
+          <div className="flex items-center gap-1">
+            <Checkbox
+              checked={product.is_visible !== false}
+              onCheckedChange={(checked) => onToggleVisibility(product.id, checked as boolean)}
+            />
+            <span className="text-xs text-muted-foreground">
+              {product.is_visible !== false ? 'На сайте' : 'Скрыт'}
+            </span>
+          </div>
+        </td>
+      )}
       <td className="p-2">
         <div className="flex gap-1">
           <Button variant="outline" size="sm" className="h-7 w-7 p-0" onClick={() => onEdit(product)}>
@@ -156,6 +165,15 @@ const ProductTable = ({ products, categories, onEdit, onDelete, onBulkDelete, on
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [localProducts, setLocalProducts] = useState<Product[]>([]);
+  const [visibleColumns, setVisibleColumns] = useState({
+    photo: true,
+    article: true,
+    name: true,
+    category: true,
+    price: true,
+    description: true,
+    visibility: true
+  });
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -226,6 +244,70 @@ const ProductTable = ({ products, categories, onEdit, onDelete, onBulkDelete, on
         <div className="flex items-center justify-between">
           <CardTitle className="text-2xl font-serif">Список товаров</CardTitle>
           <div className="flex items-center gap-2">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Icon name="Settings2" size={16} className="mr-2" />
+                  Колонки
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-60">
+                <div className="space-y-3">
+                  <h4 className="font-medium text-sm">Видимые колонки</h4>
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <Checkbox
+                        checked={visibleColumns.photo}
+                        onCheckedChange={(checked) => setVisibleColumns(prev => ({ ...prev, photo: checked as boolean }))}
+                      />
+                      <span className="text-sm">Фото</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <Checkbox
+                        checked={visibleColumns.article}
+                        onCheckedChange={(checked) => setVisibleColumns(prev => ({ ...prev, article: checked as boolean }))}
+                      />
+                      <span className="text-sm">Артикул</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <Checkbox
+                        checked={visibleColumns.name}
+                        onCheckedChange={(checked) => setVisibleColumns(prev => ({ ...prev, name: checked as boolean }))}
+                      />
+                      <span className="text-sm">Название</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <Checkbox
+                        checked={visibleColumns.category}
+                        onCheckedChange={(checked) => setVisibleColumns(prev => ({ ...prev, category: checked as boolean }))}
+                      />
+                      <span className="text-sm">Категория</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <Checkbox
+                        checked={visibleColumns.price}
+                        onCheckedChange={(checked) => setVisibleColumns(prev => ({ ...prev, price: checked as boolean }))}
+                      />
+                      <span className="text-sm">Цена</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <Checkbox
+                        checked={visibleColumns.description}
+                        onCheckedChange={(checked) => setVisibleColumns(prev => ({ ...prev, description: checked as boolean }))}
+                      />
+                      <span className="text-sm">Описание</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <Checkbox
+                        checked={visibleColumns.visibility}
+                        onCheckedChange={(checked) => setVisibleColumns(prev => ({ ...prev, visibility: checked as boolean }))}
+                      />
+                      <span className="text-sm">Видимость</span>
+                    </label>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
             <Button
               variant={selectedIds.length === filteredProducts.length && filteredProducts.length > 0 ? "default" : "outline"}
               size="sm"
@@ -274,26 +356,28 @@ const ProductTable = ({ products, categories, onEdit, onDelete, onBulkDelete, on
               <tr className="border-b">
                 <th className="text-left p-2 w-8"></th>
                 <th className="text-left p-2 w-8"></th>
-                <th className="text-left p-2 w-16">Фото</th>
-                <th className="text-left p-2 w-24">Артикул</th>
-                <th className="text-left p-2 w-36">Наименование</th>
-                <th className="text-left p-2 w-40">
-                  <Select value={filterCategory} onValueChange={setFilterCategory}>
-                    <SelectTrigger className="w-[140px] h-7 text-xs">
-                      <SelectValue placeholder="Категория" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map(cat => (
-                        <SelectItem key={cat.id} value={cat.id}>
-                          {cat.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </th>
-                <th className="text-left p-2 w-28">Цена</th>
-                <th className="text-left p-2 w-32">Описание</th>
-                <th className="text-left p-2 w-28">Отображать</th>
+                {visibleColumns.photo && <th className="text-left p-2 w-16">Фото</th>}
+                {visibleColumns.article && <th className="text-left p-2 w-24">Артикул</th>}
+                {visibleColumns.name && <th className="text-left p-2 w-36">Наименование</th>}
+                {visibleColumns.category && (
+                  <th className="text-left p-2 w-40">
+                    <Select value={filterCategory} onValueChange={setFilterCategory}>
+                      <SelectTrigger className="w-[140px] h-7 text-xs">
+                        <SelectValue placeholder="Категория" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map(cat => (
+                          <SelectItem key={cat.id} value={cat.id}>
+                            {cat.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </th>
+                )}
+                {visibleColumns.price && <th className="text-left p-2 w-28">Цена</th>}
+                {visibleColumns.description && <th className="text-left p-2 w-32">Описание</th>}
+                {visibleColumns.visibility && <th className="text-left p-2 w-28">Отображать</th>}
                 <th className="text-left p-2 w-20">Действия</th>
               </tr>
             </thead>
@@ -318,6 +402,7 @@ const ProductTable = ({ products, categories, onEdit, onDelete, onBulkDelete, on
                       onDelete={onDelete}
                       onToggleVisibility={onToggleVisibility}
                       onCategoryChange={onCategoryChange}
+                      visibleColumns={visibleColumns}
                     />
                   ))}
                 </tbody>
