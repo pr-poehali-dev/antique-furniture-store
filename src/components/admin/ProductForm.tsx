@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import Icon from '@/components/ui/icon';
 
 interface ProductFormData {
@@ -12,6 +13,7 @@ interface ProductFormData {
   name: string;
   price: string;
   category: string;
+  description?: string;
 }
 
 interface ProductFormProps {
@@ -254,6 +256,18 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
                 <SelectItem value="tables">Столы, консоли</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="description">Описание</Label>
+            <Textarea
+              id="description"
+              value={formData.description || ''}
+              onChange={(e) => onFormDataChange({ ...formData, description: e.target.value })}
+              placeholder="Подробное описание товара..."
+              rows={5}
+              className="resize-none"
+            />
           </div>
 
           <div className="flex gap-3">

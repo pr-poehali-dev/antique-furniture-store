@@ -30,6 +30,7 @@ interface Product {
   is_visible?: boolean;
   category?: string;
   sort_order?: number;
+  description?: string;
 }
 
 interface Category {
@@ -54,7 +55,8 @@ const Admin = () => {
     article: '',
     name: '',
     price: '',
-    category: 'all'
+    category: 'all',
+    description: ''
   });
   const [importingExcel, setImportingExcel] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -128,7 +130,7 @@ const Admin = () => {
         });
       }
 
-      setFormData({ photo_url: '', article: '', name: '', price: '' });
+      setFormData({ photo_url: '', article: '', name: '', price: '', category: 'all', description: '' });
       setEditingId(null);
       loadProducts();
     } catch (error) {
@@ -143,7 +145,8 @@ const Admin = () => {
       article: product.article,
       name: product.name,
       price: product.price,
-      category: product.category || 'all'
+      category: product.category || 'all',
+      description: product.description || ''
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -180,7 +183,7 @@ const Admin = () => {
 
   const handleCancel = () => {
     setEditingId(null);
-    setFormData({ photo_url: '', article: '', name: '', price: '', category: 'all' });
+    setFormData({ photo_url: '', article: '', name: '', price: '', category: 'all', description: '' });
   };
 
   const handleToggleVisibility = async (id: number, visible: boolean) => {
