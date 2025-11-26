@@ -1,12 +1,15 @@
 """
-Business: Convert uploaded image to data URL (base64) for storage
+Business: Upload image to CDN and return public URL
 Args: event with httpMethod, body (JSON with base64 encoded image)
-Returns: HTTP response with data URL
+Returns: HTTP response with CDN URL
 """
 
 import json
 import base64
+import requests
 from typing import Dict, Any
+
+UPLOAD_URL = 'https://cdn.poehali.dev/upload'
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     method: str = event.get('httpMethod', 'GET')
@@ -81,18 +84,29 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'body': json.dumps({'error': 'No file data provided', 'data_keys': list(data.keys())})
             }
         
-        print(f"📦 File received: filename={filename}, type={content_type}, base64_length={len(file_base64)}")
+        file_bytes = base64.b64decode(file_base64)
         
-        data_url = f"data:{content_type};base64,{file_base64}"
+        files = {'file': (filename, file_bytes, content_type)}
         
-        result = {
-            'url': data_url,
-            'filename': filename,
-            'content_type': content_type,
-            'size_kb': len(file_base64) // 1024
-        }
+        response = requests.post(
+            UPLOAD_URL,
+            files=files,
+            timeout=30
+        )
         
-        print(f"✅ Image ready as data URL, size: {result['size_kb']} KB")
+        if response.status_code != 200:
+            return {
+                'statusCode': response.status_code,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                'isBase64Encoded': False,
+                'body': json.dumps({
+                    'error': f'CDN error {response.status_code}: {response.text}',
+                    'cdn_status': response.status_code
+                })
+            }
         
         return {
             'statusCode': 200,
@@ -101,7 +115,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'Access-Control-Allow-Origin': '*'
             },
             'isBase64Encoded': False,
-            'body': json.dumps(result)
+            'body': response.text
         }
         
     except Exception as e:
