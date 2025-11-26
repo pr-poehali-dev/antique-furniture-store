@@ -84,29 +84,13 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'body': json.dumps({'error': 'No file data provided', 'data_keys': list(data.keys())})
             }
         
-        file_bytes = base64.b64decode(file_base64)
+        data_url = f"data:{content_type};base64,{file_base64}"
         
-        files = {'file': (filename, file_bytes, content_type)}
-        
-        response = requests.post(
-            UPLOAD_URL,
-            files=files,
-            timeout=30
-        )
-        
-        if response.status_code != 200:
-            return {
-                'statusCode': response.status_code,
-                'headers': {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
-                },
-                'isBase64Encoded': False,
-                'body': json.dumps({
-                    'error': f'CDN error {response.status_code}: {response.text}',
-                    'cdn_status': response.status_code
-                })
-            }
+        result = {
+            'url': data_url,
+            'filename': filename,
+            'size': len(file_base64)
+        }
         
         return {
             'statusCode': 200,
@@ -115,7 +99,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'Access-Control-Allow-Origin': '*'
             },
             'isBase64Encoded': False,
-            'body': response.text
+            'body': json.dumps(result)
         }
         
     except Exception as e:
