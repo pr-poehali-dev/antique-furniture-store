@@ -40,11 +40,6 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
     }
 
     setUploadingImage(true);
-    console.log('🚀 Начинаю загрузку файла:', {
-      name: file.name,
-      size: file.size,
-      type: file.type
-    });
 
     try {
       const reader = new FileReader();
@@ -56,7 +51,6 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
       });
 
       const base64Data = dataUrl.split(',')[1];
-      console.log('📄 Base64 готов, длина:', base64Data.length);
 
       const requestBody = {
         file: base64Data,
@@ -64,7 +58,6 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
         contentType: file.type
       };
       
-      console.log('📤 Отправляю запрос на сервер...');
       const response = await fetch('https://functions.poehali.dev/f26b6393-1447-4b1c-a653-339f6c61fd54', {
         method: 'POST',
         headers: {
@@ -73,14 +66,7 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
         body: JSON.stringify(requestBody)
       });
 
-      console.log('📥 Ответ получен:', {
-        status: response.status,
-        statusText: response.statusText,
-        ok: response.ok
-      });
-
       const responseText = await response.text();
-      console.log('📄 Тело ответа:', responseText);
 
       if (!response.ok) {
         let errorMsg = 'Ошибка загрузки на сервер';
@@ -94,20 +80,18 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
       }
 
       const data = JSON.parse(responseText);
-      console.log('✅ Данные распарсены:', data);
       
       if (data.url) {
-        console.log('🎉 URL получен, обновляю форму:', data.url);
-        onFormDataChange({ ...formData, photo_url: data.url });
+        const currentUrls = formData.photo_url ? formData.photo_url.split(',').map(u => u.trim()) : [];
+        const newUrls = [...currentUrls, data.url];
+        onFormDataChange({ ...formData, photo_url: newUrls.join(', ') });
       } else {
-        console.error('❌ URL не найден в ответе');
         throw new Error('URL не получен от сервера');
       }
     } catch (error) {
-      console.error('❌ Ошибка загрузки:', error);
+      console.error('Ошибка загрузки:', error);
       alert(error instanceof Error ? error.message : 'Не удалось загрузить изображение');
     } finally {
-      console.log('🏁 Загрузка завершена');
       setUploadingImage(false);
     }
   };
@@ -156,17 +140,19 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
                   e.preventDefault();
                   setIsDragging(false);
                   
-                  const file = e.dataTransfer.files?.[0];
-                  if (!file || !file.type.startsWith('image/')) {
-                    alert('Пожалуйста, загрузите изображение');
+                  const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+                  if (files.length === 0) {
+                    alert('Пожалуйста, загрузите изображения');
                     return;
                   }
-                  await handleImageUpload(file);
+                  for (const file of files) {
+                    await handleImageUpload(file);
+                  }
                 }}
               >
                 <Icon name="ImagePlus" className="mx-auto mb-2" size={40} />
                 <p className="text-muted-foreground">
-                  {uploadingImage ? 'Загрузка...' : 'Перетащите изображение сюда'}
+                  {uploadingImage ? 'Загрузка...' : 'Перетащите изображения сюда или выберите несколько файлов'}
                 </p>
               </div>
 
@@ -174,32 +160,41 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
                 id="file-upload"
                 type="file"
                 accept="image/*"
+                multiple
                 className="hidden"
                 onChange={async (e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
+                  const files = Array.from(e.target.files || []);
+                  for (const file of files) {
                     await handleImageUpload(file);
-                    e.target.value = '';
                   }
+                  e.target.value = '';
                 }}
               />
               
               {formData.photo_url && (
-                <div className="relative inline-block">
-                  <img
-                    src={formData.photo_url}
-                    alt="Предпросмотр"
-                    className="w-32 h-32 object-cover rounded border"
-                  />
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="sm"
-                    className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full"
-                    onClick={() => onFormDataChange({ ...formData, photo_url: '' })}
-                  >
-                    <Icon name="X" size={14} />
-                  </Button>
+                <div className="flex flex-wrap gap-2">
+                  {formData.photo_url.split(',').map((url, index) => (
+                    <div key={index} className="relative inline-block">
+                      <img
+                        src={url.trim()}
+                        alt={`Фото ${index + 1}`}
+                        className="w-32 h-32 object-cover rounded border"
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full"
+                        onClick={() => {
+                          const urls = formData.photo_url.split(',').map(u => u.trim());
+                          urls.splice(index, 1);
+                          onFormDataChange({ ...formData, photo_url: urls.join(', ') });
+                        }}
+                      >
+                        <Icon name="X" size={14} />
+                      </Button>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
