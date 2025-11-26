@@ -32,6 +32,7 @@ interface Product {
   is_visible?: boolean;
   category?: string;
   sort_order?: number;
+  description?: string;
 }
 
 interface Category {
@@ -121,6 +122,11 @@ const SortableProductRow = ({ product, categories, selectedIds, onToggleSelect, 
         </Select>
       </td>
       <td className="p-3">{parseFloat(product.price).toLocaleString('ru-RU')} ₽</td>
+      <td className="p-3 max-w-[200px]">
+        <div className="text-sm text-muted-foreground truncate" title={product.description || ''}>
+          {product.description || '—'}
+        </div>
+      </td>
       <td className="p-3">
         <div className="flex items-center gap-2">
           <Checkbox
@@ -286,6 +292,7 @@ const ProductTable = ({ products, categories, onEdit, onDelete, onBulkDelete, on
                   </Select>
                 </th>
                 <th className="text-left p-3">Цена</th>
+                <th className="text-left p-3">Описание</th>
                 <th className="text-left p-3 w-40">Отображать</th>
                 <th className="text-left p-3">Действия</th>
               </tr>

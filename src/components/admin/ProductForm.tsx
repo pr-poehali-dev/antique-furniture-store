@@ -174,12 +174,39 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
               {formData.photo_url && (
                 <div className="flex flex-wrap gap-2">
                   {formData.photo_url.split(',').map((url, index) => (
-                    <div key={index} className="relative inline-block">
+                    <div 
+                      key={index} 
+                      className="relative inline-block cursor-move group"
+                      draggable
+                      onDragStart={(e) => {
+                        e.dataTransfer.effectAllowed = 'move';
+                        e.dataTransfer.setData('text/plain', index.toString());
+                      }}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
+                      }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+                        const toIndex = index;
+                        
+                        if (fromIndex !== toIndex) {
+                          const urls = formData.photo_url.split(',').map(u => u.trim());
+                          const [movedUrl] = urls.splice(fromIndex, 1);
+                          urls.splice(toIndex, 0, movedUrl);
+                          onFormDataChange({ ...formData, photo_url: urls.join(', ') });
+                        }
+                      }}
+                    >
                       <img
                         src={url.trim()}
                         alt={`Фото ${index + 1}`}
-                        className="w-32 h-32 object-cover rounded border"
+                        className="w-32 h-32 object-cover rounded border group-hover:opacity-75 transition-opacity"
                       />
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                        <Icon name="GripVertical" size={24} className="text-white drop-shadow-lg" />
+                      </div>
                       <Button
                         type="button"
                         variant="destructive"
