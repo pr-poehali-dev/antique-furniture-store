@@ -45,7 +45,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             
             if product_id:
                 cur.execute(
-                    "SELECT id, photo_url, article, name, price, created_at, is_visible, category, sort_order FROM products_new WHERE id = %s",
+                    "SELECT id, photo_url, article, name, price, created_at, is_visible, category, sort_order, description FROM products_new WHERE id = %s",
                     (product_id,)
                 )
                 product = cur.fetchone()
@@ -63,7 +63,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'body': json.dumps(dict(product), default=str)
                 }
             else:
-                cur.execute("SELECT id, photo_url, article, name, price, created_at, is_visible, category, sort_order FROM products_new ORDER BY COALESCE(sort_order, 999999), created_at DESC")
+                cur.execute("SELECT id, photo_url, article, name, price, created_at, is_visible, category, sort_order, description FROM products_new ORDER BY COALESCE(sort_order, 999999), created_at DESC")
                 products = cur.fetchall()
                 
                 return {
@@ -81,6 +81,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             name: str = body_data.get('name', '')
             price: float = body_data.get('price', 0)
             category: Optional[str] = body_data.get('category', 'all')
+            description: Optional[str] = body_data.get('description')
             
             if not article or not name or price <= 0:
                 return {
@@ -90,8 +91,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 }
             
             cur.execute(
-                "INSERT INTO products_new (photo_url, article, name, price, category) VALUES (%s, %s, %s, %s, %s) RETURNING id, photo_url, article, name, price, created_at, is_visible, category",
-                (photo_url, article, name, price, category)
+                "INSERT INTO products_new (photo_url, article, name, price, category, description) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id, photo_url, article, name, price, created_at, is_visible, category, description",
+                (photo_url, article, name, price, category, description)
             )
             
             new_product = cur.fetchone()
@@ -121,6 +122,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             price = body_data.get('price')
             category = body_data.get('category')
             sort_order = body_data.get('sort_order')
+            description = body_data.get('description')
             
             updates = []
             values = []
@@ -143,6 +145,9 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             if sort_order is not None:
                 updates.append("sort_order = %s")
                 values.append(sort_order)
+            if description is not None:
+                updates.append("description = %s")
+                values.append(description)
             
             if not updates:
                 return {
@@ -152,7 +157,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 }
             
             values.append(product_id)
-            query = f"UPDATE products_new SET {', '.join(updates)} WHERE id = %s RETURNING id, photo_url, article, name, price, created_at, is_visible, category, sort_order"
+            query = f"UPDATE products_new SET {', '.join(updates)} WHERE id = %s RETURNING id, photo_url, article, name, price, created_at, is_visible, category, sort_order, description"
             
             cur.execute(query, values)
             updated_product = cur.fetchone()
@@ -186,7 +191,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 }
             
             cur.execute(
-                "UPDATE products_new SET is_visible = %s WHERE id = %s RETURNING id, photo_url, article, name, price, created_at, is_visible, category",
+                "UPDATE products_new SET is_visible = %s WHERE id = %s RETURNING id, photo_url, article, name, price, created_at, is_visible, category, description",
                 (is_visible, product_id)
             )
             
