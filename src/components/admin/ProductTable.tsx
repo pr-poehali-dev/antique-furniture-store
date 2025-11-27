@@ -72,48 +72,48 @@ const SortableProductRow = ({ product, categories, selectedIds, onToggleSelect, 
 
   return (
     <tr ref={setNodeRef} style={style} className="border-b hover:bg-muted/50 bg-background h-16">
-      <td className="p-2">
+      <td className="p-3">
         <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing">
-          <Icon name="GripVertical" size={16} className="text-muted-foreground" />
+          <Icon name="GripVertical" size={20} className="text-muted-foreground" />
         </div>
       </td>
-      <td className="p-2">
+      <td className="p-3">
         <Checkbox
           checked={selectedIds.includes(product.id)}
           onCheckedChange={() => onToggleSelect(product.id)}
         />
       </td>
       {visibleColumns.photo && (
-        <td className="p-2">
+        <td className="p-3">
           {product.photo_url ? (
             <img
               src={product.photo_url}
               alt={product.name}
-              className="w-12 h-12 object-cover rounded border border-border"
+              className="w-16 h-16 object-cover rounded border border-border"
               onError={(e) => {
                 (e.target as HTMLImageElement).style.display = 'none';
                 const parent = (e.target as HTMLImageElement).parentElement;
                 if (parent) {
-                  parent.innerHTML = '<div class="w-12 h-12 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">Нет фото</div>';
+                  parent.innerHTML = '<div class="w-16 h-16 bg-muted rounded flex items-center justify-center text-sm text-muted-foreground">Нет фото</div>';
                 }
               }}
             />
           ) : (
-            <div className="w-12 h-12 bg-muted rounded flex items-center justify-center">
-              <Icon name="ImageOff" size={16} className="text-muted-foreground" />
+            <div className="w-16 h-16 bg-muted rounded flex items-center justify-center">
+              <Icon name="ImageOff" size={20} className="text-muted-foreground" />
             </div>
           )}
         </td>
       )}
-      {visibleColumns.article && <td className="p-2 text-sm">{product.article}</td>}
-      {visibleColumns.name && <td className="p-2 text-sm max-w-[150px] truncate" title={product.name}>{product.name}</td>}
+      {visibleColumns.article && <td className="p-3">{product.article}</td>}
+      {visibleColumns.name && <td className="p-3 truncate" title={product.name}>{product.name}</td>}
       {visibleColumns.category && (
-        <td className="p-2">
+        <td className="p-3">
           <Select 
             value={product.category || 'all'} 
             onValueChange={(value) => onCategoryChange(product.id, value)}
           >
-            <SelectTrigger className="w-[140px] h-8 text-xs">
+            <SelectTrigger className="w-[180px] h-9">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -126,34 +126,34 @@ const SortableProductRow = ({ product, categories, selectedIds, onToggleSelect, 
           </Select>
         </td>
       )}
-      {visibleColumns.price && <td className="p-2 text-sm whitespace-nowrap">{parseFloat(product.price).toLocaleString('ru-RU')} ₽</td>}
+      {visibleColumns.price && <td className="p-3 whitespace-nowrap">{parseFloat(product.price).toLocaleString('ru-RU')} ₽</td>}
       {visibleColumns.description && (
-        <td className="p-2 max-w-[120px]">
-          <div className="text-xs text-muted-foreground truncate" title={product.description || ''}>
+        <td className="p-3">
+          <div className="text-sm text-muted-foreground truncate" title={product.description || ''}>
             {product.description || '—'}
           </div>
         </td>
       )}
       {visibleColumns.visibility && (
-        <td className="p-2">
-          <div className="flex items-center gap-1">
+        <td className="p-3">
+          <div className="flex items-center gap-2">
             <Checkbox
               checked={product.is_visible !== false}
               onCheckedChange={(checked) => onToggleVisibility(product.id, checked as boolean)}
             />
-            <span className="text-xs text-muted-foreground">
+            <span className="text-sm text-muted-foreground">
               {product.is_visible !== false ? 'На сайте' : 'Скрыт'}
             </span>
           </div>
         </td>
       )}
-      <td className="p-2">
-        <div className="flex gap-1">
-          <Button variant="outline" size="sm" className="h-7 w-7 p-0" onClick={() => onEdit(product)}>
-            <Icon name="Edit" size={12} />
+      <td className="p-3">
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={() => onEdit(product)}>
+            <Icon name="Edit" size={14} />
           </Button>
-          <Button variant="destructive" size="sm" className="h-7 w-7 p-0" onClick={() => onDelete(product.id)}>
-            <Icon name="Trash2" size={12} />
+          <Button variant="destructive" size="sm" className="h-8 w-8 p-0" onClick={() => onDelete(product.id)}>
+            <Icon name="Trash2" size={14} />
           </Button>
         </div>
       </td>
@@ -350,19 +350,19 @@ const ProductTable = ({ products, categories, onEdit, onDelete, onBulkDelete, on
         </div>
       </CardHeader>
       <CardContent>
-        <div className="overflow-x-auto max-h-[calc(100vh-400px)] overflow-y-auto">
-          <table className="w-full table-fixed">
+        <div className="overflow-x-auto max-h-[calc(100vh-300px)] overflow-y-auto">
+          <table className="w-full min-w-[1200px]">
             <thead className="sticky top-0 bg-background z-10">
               <tr className="border-b">
-                <th className="text-left p-2 w-8"></th>
-                <th className="text-left p-2 w-8"></th>
-                {visibleColumns.photo && <th className="text-left p-2 w-16">Фото</th>}
-                {visibleColumns.article && <th className="text-left p-2 w-24">Артикул</th>}
-                {visibleColumns.name && <th className="text-left p-2 w-36">Наименование</th>}
+                <th className="text-left p-3 w-12"></th>
+                <th className="text-left p-3 w-12"></th>
+                {visibleColumns.photo && <th className="text-left p-3 w-20">Фото</th>}
+                {visibleColumns.article && <th className="text-left p-3 w-32">Артикул</th>}
+                {visibleColumns.name && <th className="text-left p-3">Наименование</th>}
                 {visibleColumns.category && (
-                  <th className="text-left p-2 w-40">
+                  <th className="text-left p-3 w-48">
                     <Select value={filterCategory} onValueChange={setFilterCategory}>
-                      <SelectTrigger className="w-[140px] h-7 text-xs">
+                      <SelectTrigger className="w-[180px] h-8">
                         <SelectValue placeholder="Категория" />
                       </SelectTrigger>
                       <SelectContent>
@@ -375,10 +375,10 @@ const ProductTable = ({ products, categories, onEdit, onDelete, onBulkDelete, on
                     </Select>
                   </th>
                 )}
-                {visibleColumns.price && <th className="text-left p-2 w-28">Цена</th>}
-                {visibleColumns.description && <th className="text-left p-2 w-32">Описание</th>}
-                {visibleColumns.visibility && <th className="text-left p-2 w-28">Отображать</th>}
-                <th className="text-left p-2 w-20">Действия</th>
+                {visibleColumns.price && <th className="text-left p-3 w-32">Цена</th>}
+                {visibleColumns.description && <th className="text-left p-3">Описание</th>}
+                {visibleColumns.visibility && <th className="text-left p-3 w-32">Отображать</th>}
+                <th className="text-left p-3 w-28">Действия</th>
               </tr>
             </thead>
             <DndContext
