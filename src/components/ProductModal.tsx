@@ -27,12 +27,25 @@ const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
 
   const imageSource = product.image_url || product.photo_url || '';
   
+  console.log('=== DEBUG ===');
+  console.log('product.image_url exists:', !!product.image_url);
+  console.log('product.photo_url exists:', !!product.photo_url);
+  console.log('imageSource length:', imageSource?.length);
+  console.log('imageSource starts with:', imageSource?.substring(0, 30));
+  
   // Разделитель ||| для base64 изображений, иначе запятая
   const images = imageSource 
     ? (imageSource.includes('|||')
         ? imageSource.split('|||').map(url => url.trim()).filter(url => url.length > 0)
         : imageSource.split(',').map(url => url.trim()).filter(url => url.length > 0))
     : [];
+  
+  console.log('images count:', images.length);
+  if (images.length > 0) {
+    console.log('first image starts:', images[0]?.substring(0, 30));
+    console.log('first image length:', images[0]?.length);
+  }
+  console.log('=== END DEBUG ===');
   
 
 
