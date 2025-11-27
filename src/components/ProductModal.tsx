@@ -24,8 +24,11 @@ const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
   if (!product) return null;
 
   const images = product.image_url 
-    ? product.image_url.split(',').map(url => url.trim())
+    ? product.image_url.split(',').map(url => url.trim()).filter(url => url.length > 0)
     : [];
+  
+  console.log('Product image_url:', product.image_url);
+  console.log('Parsed images:', images);
 
   const hasMultipleImages = images.length > 1;
 
@@ -57,6 +60,17 @@ const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
                   src={images[currentImageIndex]}
                   alt={`${product.title} - ${currentImageIndex + 1}`}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    const parent = target.parentElement;
+                    if (parent && !parent.querySelector('.fallback-icon')) {
+                      const fallback = document.createElement('div');
+                      fallback.className = 'fallback-icon flex items-center justify-center h-full';
+                      fallback.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>';
+                      parent.appendChild(fallback);
+                    }
+                  }}
                 />
                 
                 {hasMultipleImages && (
