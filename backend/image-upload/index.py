@@ -1,15 +1,14 @@
 """
-Business: Upload image to CDN and return public URL
+Business: Compress and optimize image, return as data URL
 Args: event with httpMethod, body (JSON with base64 encoded image)
-Returns: HTTP response with CDN URL
+Returns: HTTP response with optimized base64 data URL
 """
 
 import json
 import base64
-import requests
+import io
 from typing import Dict, Any
-
-UPLOAD_URL = 'https://cdn.poehali.dev/upload'
+from PIL import Image
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     method: str = event.get('httpMethod', 'GET')
@@ -86,30 +85,28 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         
         file_data = base64.b64decode(file_base64)
         
-        files = {'file': (filename, file_data, content_type)}
+        img = Image.open(io.BytesIO(file_data))
         
-        upload_response = requests.post(UPLOAD_URL, files=files, timeout=30)
+        if img.mode in ('RGBA', 'LA', 'P'):
+            img = img.convert('RGB')
         
-        if upload_response.status_code != 200:
-            return {
-                'statusCode': upload_response.status_code,
-                'headers': {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
-                },
-                'isBase64Encoded': False,
-                'body': json.dumps({
-                    'error': 'CDN upload failed',
-                    'cdn_response': upload_response.text
-                })
-            }
+        max_size = 800
+        if img.width > max_size or img.height > max_size:
+            img.thumbnail((max_size, max_size), Image.Resampling.LANCZOS)
         
-        cdn_data = upload_response.json()
+        output = io.BytesIO()
+        img.save(output, format='JPEG', quality=85, optimize=True)
+        compressed_data = output.getvalue()
+        
+        compressed_base64 = base64.b64encode(compressed_data).decode('utf-8')
+        data_url = f"data:image/jpeg;base64,{compressed_base64}"
         
         result = {
-            'url': cdn_data.get('url', ''),
+            'url': data_url,
             'filename': filename,
-            'size': len(file_data)
+            'size': len(compressed_data),
+            'original_size': len(file_data),
+            'compression_ratio': round(len(compressed_data) / len(file_data), 2)
         }
         
         return {
