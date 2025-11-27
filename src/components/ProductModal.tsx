@@ -5,9 +5,11 @@ import Icon from '@/components/ui/icon';
 
 interface Product {
   id: number;
-  title: string;
+  title?: string;
+  name?: string;
   price: number;
-  image_url: string;
+  image_url?: string;
+  photo_url?: string;
   period?: string;
   description?: string;
 }
@@ -23,13 +25,14 @@ const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
 
   if (!product) return null;
 
-  const images = product.image_url 
-    ? product.image_url.split(',')
+  const imageSource = product.image_url || product.photo_url || '';
+  const images = imageSource 
+    ? imageSource.split(',')
         .map(url => url.trim())
-        .filter(url => url.length > 0 && !url.startsWith('data:image'))
+        .filter(url => url.length > 0)
     : [];
   
-  console.log('Product image_url:', product.image_url);
+  console.log('Product imageSource:', imageSource);
   console.log('Parsed images:', images);
 
   const hasMultipleImages = images.length > 1;
@@ -51,7 +54,7 @@ const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogTitle className="text-2xl font-serif text-primary mb-4">
-          {product.title}
+          {product.title || product.name}
         </DialogTitle>
 
         <div className="grid md:grid-cols-2 gap-6">
