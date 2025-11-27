@@ -27,19 +27,14 @@ const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
 
   const imageSource = product.image_url || product.photo_url || '';
   
-  // Если это base64 изображение, не разбивать по запятой
+  // Разделитель ||| для base64 изображений, иначе запятая
   const images = imageSource 
-    ? (imageSource.startsWith('data:image/') 
-        ? [imageSource] 
+    ? (imageSource.includes('|||')
+        ? imageSource.split('|||').map(url => url.trim()).filter(url => url.length > 0)
         : imageSource.split(',').map(url => url.trim()).filter(url => url.length > 0))
     : [];
   
-  console.log('Product:', product);
-  console.log('imageSource length:', imageSource?.length);
-  console.log('images array:', images.length);
-  if (images.length > 0) {
-    console.log('First image starts with:', images[0]?.substring(0, 50));
-  }
+
 
   const hasMultipleImages = images.length > 1;
 

@@ -121,9 +121,10 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
       const data = JSON.parse(responseText);
       
       if (data.url) {
-        const currentUrls = formData.photo_url ? formData.photo_url.split(',').map(u => u.trim()) : [];
+        // Разделитель для base64: используем ||| вместо запятой
+        const currentUrls = formData.photo_url ? formData.photo_url.split('|||').map(u => u.trim()).filter(u => u) : [];
         const newUrls = [...currentUrls, data.url];
-        onFormDataChange({ ...formData, photo_url: newUrls.join(', ') });
+        onFormDataChange({ ...formData, photo_url: newUrls.join('|||') });
       } else {
         throw new Error('URL не получен от сервера');
       }
@@ -148,21 +149,15 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
             <Label htmlFor="photo_url">Фото</Label>
             <div className="space-y-2">
               <div className="flex gap-2">
-                <Input
-                  id="photo_url"
-                  value={formData.photo_url}
-                  onChange={(e) => onFormDataChange({ ...formData, photo_url: e.target.value })}
-                  placeholder="https://example.com/photo.jpg или перетащите файл"
-                  className="flex-1"
-                />
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => document.getElementById('file-upload')?.click()}
                   disabled={uploadingImage}
+                  className="flex-1"
                 >
                   <Icon name="Upload" className="mr-2" size={18} />
-                  {uploadingImage ? 'Загрузка...' : 'Загрузить'}
+                  {uploadingImage ? 'Загрузка...' : 'Загрузить изображения'}
                 </Button>
               </div>
               
@@ -212,7 +207,7 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
               
               {formData.photo_url && (
                 <div className="flex flex-wrap gap-2">
-                  {formData.photo_url.split(',').map((url, index) => (
+                  {formData.photo_url.split('|||').filter(u => u.trim()).map((url, index) => (
                     <div 
                       key={index} 
                       className="relative inline-block cursor-move group"
@@ -231,10 +226,10 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
                         const toIndex = index;
                         
                         if (fromIndex !== toIndex) {
-                          const urls = formData.photo_url.split(',').map(u => u.trim());
+                          const urls = formData.photo_url.split('|||').map(u => u.trim()).filter(u => u);
                           const [movedUrl] = urls.splice(fromIndex, 1);
                           urls.splice(toIndex, 0, movedUrl);
-                          onFormDataChange({ ...formData, photo_url: urls.join(', ') });
+                          onFormDataChange({ ...formData, photo_url: urls.join('|||') });
                         }
                       }}
                     >
@@ -252,9 +247,9 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
                         size="sm"
                         className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full"
                         onClick={() => {
-                          const urls = formData.photo_url.split(',').map(u => u.trim());
+                          const urls = formData.photo_url.split('|||').map(u => u.trim()).filter(u => u);
                           urls.splice(index, 1);
-                          onFormDataChange({ ...formData, photo_url: urls.join(', ') });
+                          onFormDataChange({ ...formData, photo_url: urls.join('|||') });
                         }}
                       >
                         <Icon name="X" size={14} />
