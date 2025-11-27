@@ -26,10 +26,12 @@ const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
   if (!product) return null;
 
   const imageSource = product.image_url || product.photo_url || '';
+  
+  // Если это base64 изображение, не разбивать по запятой
   const images = imageSource 
-    ? imageSource.split(',')
-        .map(url => url.trim())
-        .filter(url => url.length > 0)
+    ? (imageSource.startsWith('data:image/') 
+        ? [imageSource] 
+        : imageSource.split(',').map(url => url.trim()).filter(url => url.length > 0))
     : [];
   
   console.log('Product:', product);
