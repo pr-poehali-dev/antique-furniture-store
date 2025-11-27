@@ -32,8 +32,12 @@ const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
         .filter(url => url.length > 0)
     : [];
   
-  console.log('Product imageSource:', imageSource);
-  console.log('Parsed images:', images);
+  console.log('Product:', product);
+  console.log('imageSource length:', imageSource?.length);
+  console.log('images array:', images.length);
+  if (images.length > 0) {
+    console.log('First image starts with:', images[0]?.substring(0, 50));
+  }
 
   const hasMultipleImages = images.length > 1;
 
