@@ -24,7 +24,9 @@ const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
   if (!product) return null;
 
   const images = product.image_url 
-    ? product.image_url.split(',').map(url => url.trim()).filter(url => url.length > 0)
+    ? product.image_url.split(',')
+        .map(url => url.trim())
+        .filter(url => url.length > 0 && !url.startsWith('data:image'))
     : [];
   
   console.log('Product image_url:', product.image_url);
