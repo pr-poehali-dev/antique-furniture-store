@@ -45,7 +45,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             
             if product_id:
                 cur.execute(
-                    "SELECT id, photo_url, article, name, price, created_at, is_visible, category, sort_order, description FROM products_new WHERE id = %s",
+                    "SELECT id, photo_url, main_image, article, name, price, created_at, is_visible, category, sort_order, description FROM products_new WHERE id = %s",
                     (product_id,)
                 )
                 product = cur.fetchone()
@@ -63,7 +63,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'body': json.dumps(dict(product), default=str)
                 }
             else:
-                cur.execute("SELECT id, photo_url, article, name, price, created_at, is_visible, category, sort_order, description FROM products_new ORDER BY COALESCE(sort_order, 999999), created_at DESC")
+                cur.execute("SELECT id, photo_url, main_image, article, name, price, created_at, is_visible, category, sort_order, description FROM products_new ORDER BY COALESCE(sort_order, 999999), created_at DESC")
                 products = cur.fetchall()
                 
                 return {
@@ -196,7 +196,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 }
             
             cur.execute(
-                "UPDATE products_new SET is_visible = %s WHERE id = %s RETURNING id, photo_url, article, name, price, created_at, is_visible, category, description",
+                "UPDATE products_new SET is_visible = %s WHERE id = %s RETURNING id, photo_url, main_image, article, name, price, created_at, is_visible, category, description",
                 (is_visible, product_id)
             )
             

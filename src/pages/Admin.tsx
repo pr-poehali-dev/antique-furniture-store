@@ -186,7 +186,7 @@ const Admin = () => {
 
   const handleCancel = () => {
     setEditingId(null);
-    setFormData({ photo_url: '', article: '', name: '', price: '', category: 'all', description: '' });
+    setFormData({ photo_url: '', main_image: '', article: '', name: '', price: '', category: 'all', description: '' });
   };
 
   const handleToggleVisibility = async (id: number, visible: boolean) => {
