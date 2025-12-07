@@ -7,9 +7,10 @@ interface Product {
   title?: string;
   price: number | string;
   image_url?: string;
+  photo_url?: string;
+  main_image?: string;
   period?: string;
   description?: string;
-  photo_url?: string;
   article?: string;
   name?: string;
   created_at?: string;
