@@ -123,6 +123,7 @@ const Index = () => {
           title: selectedProduct.name || selectedProduct.title || '',
           price: typeof selectedProduct.price === 'string' ? parseFloat(selectedProduct.price) : selectedProduct.price,
           image_url: selectedProduct.photo_url || selectedProduct.image_url || '',
+          main_image: selectedProduct.main_image,
           period: selectedProduct.article,
           description: selectedProduct.description
         } : null}

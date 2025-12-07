@@ -91,8 +91,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 }
             
             cur.execute(
-                "INSERT INTO products_new (photo_url, article, name, price, category, description) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id, photo_url, article, name, price, created_at, is_visible, category, description",
-                (photo_url, article, name, price, category, description)
+                "INSERT INTO products_new (photo_url, main_image, article, name, price, category, description) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id, photo_url, main_image, article, name, price, created_at, is_visible, category, description",
+                (photo_url, main_image, article, name, price, category, description)
             )
             
             new_product = cur.fetchone()
@@ -117,6 +117,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 }
             
             photo_url = body_data.get('photo_url')
+            main_image = body_data.get('main_image')
             article = body_data.get('article')
             name = body_data.get('name')
             price = body_data.get('price')
@@ -130,6 +131,9 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             if photo_url is not None:
                 updates.append("photo_url = %s")
                 values.append(photo_url)
+            if main_image is not None:
+                updates.append("main_image = %s")
+                values.append(main_image)
             if article:
                 updates.append("article = %s")
                 values.append(article)
@@ -157,7 +161,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 }
             
             values.append(product_id)
-            query = f"UPDATE products_new SET {', '.join(updates)} WHERE id = %s RETURNING id, photo_url, article, name, price, created_at, is_visible, category, sort_order, description"
+            query = f"UPDATE products_new SET {', '.join(updates)} WHERE id = %s RETURNING id, photo_url, main_image, article, name, price, created_at, is_visible, category, sort_order, description"
             
             cur.execute(query, values)
             updated_product = cur.fetchone()

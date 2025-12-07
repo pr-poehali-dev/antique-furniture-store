@@ -9,6 +9,7 @@ import Icon from '@/components/ui/icon';
 
 interface ProductFormData {
   photo_url: string;
+  main_image?: string;
   article: string;
   name: string;
   price: string;
@@ -26,7 +27,9 @@ interface ProductFormProps {
 
 const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange }: ProductFormProps) => {
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingMainImage, setUploadingMainImage] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [isDraggingMain, setIsDraggingMain] = useState(false);
 
   const compressImage = async (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -74,7 +77,7 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
     });
   };
 
-  const handleImageUpload = async (file: File) => {
+  const handleImageUpload = async (file: File, isMain = false) => {
     if (!file.type.startsWith('image/')) {
       alert('Пожалуйста, загрузите изображение');
       return;
@@ -85,7 +88,11 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
       return;
     }
 
-    setUploadingImage(true);
+    if (isMain) {
+      setUploadingMainImage(true);
+    } else {
+      setUploadingImage(true);
+    }
 
     try {
       const dataUrl = await compressImage(file);
@@ -121,10 +128,14 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
       const data = JSON.parse(responseText);
       
       if (data.url) {
-        // Разделитель для base64: используем ||| вместо запятой
-        const currentUrls = formData.photo_url ? formData.photo_url.split('|||').map(u => u.trim()).filter(u => u) : [];
-        const newUrls = [...currentUrls, data.url];
-        onFormDataChange({ ...formData, photo_url: newUrls.join('|||') });
+        if (isMain) {
+          onFormDataChange({ ...formData, main_image: data.url });
+        } else {
+          // Разделитель для base64: используем ||| вместо запятой
+          const currentUrls = formData.photo_url ? formData.photo_url.split('|||').map(u => u.trim()).filter(u => u) : [];
+          const newUrls = [...currentUrls, data.url];
+          onFormDataChange({ ...formData, photo_url: newUrls.join('|||') });
+        }
       } else {
         throw new Error('URL не получен от сервера');
       }
@@ -132,7 +143,11 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
       console.error('Ошибка загрузки:', error);
       alert(error instanceof Error ? error.message : 'Не удалось загрузить изображение');
     } finally {
-      setUploadingImage(false);
+      if (isMain) {
+        setUploadingMainImage(false);
+      } else {
+        setUploadingImage(false);
+      }
     }
   };
 
@@ -146,7 +161,88 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
       <CardContent>
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="photo_url">Фото</Label>
+            <Label htmlFor="main_image">Главное фото</Label>
+            <div className="space-y-2">
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => document.getElementById('main-file-upload')?.click()}
+                  disabled={uploadingMainImage}
+                  className="flex-1"
+                >
+                  <Icon name="Upload" className="mr-2" size={18} />
+                  {uploadingMainImage ? 'Загрузка...' : 'Загрузить главное фото'}
+                </Button>
+              </div>
+              
+              <div
+                className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                  isDraggingMain ? 'border-primary bg-primary/5' : 'border-muted-foreground/30 hover:border-primary/50'
+                }`}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setIsDraggingMain(true);
+                }}
+                onDragLeave={() => setIsDraggingMain(false)}
+                onDrop={async (e) => {
+                  e.preventDefault();
+                  setIsDraggingMain(false);
+                  
+                  const file = e.dataTransfer.files[0];
+                  if (file && file.type.startsWith('image/')) {
+                    await handleImageUpload(file, true);
+                  } else {
+                    alert('Пожалуйста, загрузите изображение');
+                  }
+                }}
+              >
+                <Icon name="Image" className="mx-auto mb-2" size={40} />
+                <p className="text-muted-foreground">
+                  {uploadingMainImage ? 'Загрузка...' : 'Перетащите главное фото сюда'}
+                </p>
+              </div>
+
+              <input
+                id="main-file-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    await handleImageUpload(file, true);
+                  }
+                  e.target.value = '';
+                }}
+              />
+              
+              {formData.main_image && (
+                <div className="relative inline-block group">
+                  <img
+                    src={formData.main_image}
+                    alt="Главное фото"
+                    className="w-32 h-32 object-cover rounded border-2 border-primary"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => onFormDataChange({ ...formData, main_image: '' })}
+                  >
+                    <Icon name="X" size={16} />
+                  </Button>
+                  <div className="absolute bottom-0 left-0 right-0 bg-primary text-primary-foreground text-xs py-1 text-center">
+                    Главное
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="photo_url">Дополнительные фото</Label>
             <div className="space-y-2">
               <div className="flex gap-2">
                 <Button

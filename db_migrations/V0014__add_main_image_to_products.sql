@@ -1,0 +1,1 @@
+ALTER TABLE products_new ADD COLUMN IF NOT EXISTS main_image TEXT;

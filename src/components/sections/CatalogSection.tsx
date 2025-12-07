@@ -98,9 +98,9 @@ const CatalogSection = ({
               >
                 <CardContent className="p-0">
                   <div className="relative overflow-hidden bg-muted">
-                    {product.photo_url ? (
+                    {(product.main_image || product.photo_url) ? (
                       <img
-                        src={product.photo_url}
+                        src={product.main_image || product.photo_url}
                         alt={product.name}
                         className="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-110"
                         onError={(e) => {
