@@ -85,19 +85,26 @@ const SortableProductRow = ({ product, categories, selectedIds, onToggleSelect, 
       </td>
       {visibleColumns.photo && (
         <td className="p-2">
-          {product.photo_url ? (
-            <img
-              src={product.photo_url}
-              alt={product.name}
-              className="w-12 h-12 object-cover rounded border border-border"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-                const parent = (e.target as HTMLImageElement).parentElement;
-                if (parent) {
-                  parent.innerHTML = '<div class="w-12 h-12 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">Нет фото</div>';
-                }
-              }}
-            />
+          {(product.main_image || product.photo_url) ? (
+            <div className="relative inline-block">
+              <img
+                src={product.main_image || product.photo_url}
+                alt={product.name}
+                className="w-12 h-12 object-cover rounded border border-border"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                  const parent = (e.target as HTMLImageElement).parentElement;
+                  if (parent) {
+                    parent.innerHTML = '<div class="w-12 h-12 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">Нет фото</div>';
+                  }
+                }}
+              />
+              {product.main_image && (
+                <div className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-[8px] px-1 rounded">
+                  Главное
+                </div>
+              )}
+            </div>
           ) : (
             <div className="w-12 h-12 bg-muted rounded flex items-center justify-center">
               <Icon name="ImageOff" size={16} className="text-muted-foreground" />
