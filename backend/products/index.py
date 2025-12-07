@@ -77,6 +77,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             body_data = json.loads(event.get('body', '{}'))
             
             photo_url: Optional[str] = body_data.get('photo_url')
+            main_image: Optional[str] = body_data.get('main_image')
             article: str = body_data.get('article', '')
             name: str = body_data.get('name', '')
             price: float = body_data.get('price', 0)
