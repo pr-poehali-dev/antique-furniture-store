@@ -23,6 +23,7 @@ import {
 interface Product {
   id: number;
   photo_url: string;
+  main_image?: string;
   article: string;
   name: string;
   price: string;
@@ -52,6 +53,7 @@ const Admin = () => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     photo_url: '',
+    main_image: '',
     article: '',
     name: '',
     price: '',
@@ -130,7 +132,7 @@ const Admin = () => {
         });
       }
 
-      setFormData({ photo_url: '', article: '', name: '', price: '', category: 'all', description: '' });
+      setFormData({ photo_url: '', main_image: '', article: '', name: '', price: '', category: 'all', description: '' });
       setEditingId(null);
       loadProducts();
     } catch (error) {
@@ -142,6 +144,7 @@ const Admin = () => {
     setEditingId(product.id);
     setFormData({
       photo_url: product.photo_url,
+      main_image: product.main_image || '',
       article: product.article,
       name: product.name,
       price: product.price,
