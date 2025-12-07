@@ -7,6 +7,7 @@ Returns: HTTP response with optimized base64 data URL
 import json
 import base64
 import io
+import os
 from typing import Dict, Any
 from PIL import Image
 
@@ -98,11 +99,33 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         img.save(output, format='JPEG', quality=85, optimize=True)
         compressed_data = output.getvalue()
         
-        compressed_base64 = base64.b64encode(compressed_data).decode('utf-8')
-        data_url = f"data:image/jpeg;base64,{compressed_base64}"
+        # Upload to S3
+        import boto3
+        import uuid
+        
+        s3 = boto3.client('s3',
+            endpoint_url='https://bucket.poehali.dev',
+            aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
+            aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY']
+        )
+        
+        # Generate unique filename
+        file_ext = filename.split('.')[-1] if '.' in filename else 'jpg'
+        unique_filename = f"products/{uuid.uuid4()}.{file_ext}"
+        
+        # Upload to S3
+        s3.put_object(
+            Bucket='files',
+            Key=unique_filename,
+            Body=compressed_data,
+            ContentType='image/jpeg'
+        )
+        
+        # Generate CDN URL
+        cdn_url = f"https://cdn.poehali.dev/projects/{os.environ['AWS_ACCESS_KEY_ID']}/bucket/{unique_filename}"
         
         result = {
-            'url': data_url,
+            'url': cdn_url,
             'filename': filename,
             'size': len(compressed_data),
             'original_size': len(file_data),
