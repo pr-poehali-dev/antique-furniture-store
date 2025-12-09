@@ -98,7 +98,7 @@ const CatalogSection = ({
                 }}
               >
                 <CardContent className="p-0">
-                  <div className="relative overflow-hidden bg-muted h-80 flex items-center justify-center">
+                  <div className="relative overflow-hidden bg-muted h-96 flex items-center justify-center">
                     {(product.main_image || product.photo_url) ? (
                       <img
                         src={product.main_image || product.photo_url}
