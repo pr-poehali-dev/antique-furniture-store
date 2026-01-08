@@ -118,18 +118,29 @@ const Admin = () => {
     };
 
     try {
+      let response;
       if (editingId) {
-        await fetch(API_URL, {
+        response = await fetch(API_URL, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ...payload, id: editingId })
         });
       } else {
-        await fetch(API_URL, {
+        response = await fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        if (response.status === 409) {
+          alert(`Ошибка: ${errorData.error}\n\nСуществующий товар: ${errorData.existing_product?.name || 'Неизвестно'}\n\nПожалуйста, используйте другой артикул.`);
+        } else {
+          alert(`Ошибка: ${errorData.error || 'Не удалось сохранить товар'}`);
+        }
+        return;
       }
 
       setFormData({ photo_url: '', main_image: '', article: '', name: '', price: '', category: 'all', description: '' });
@@ -137,6 +148,7 @@ const Admin = () => {
       loadProducts();
     } catch (error) {
       console.error('Ошибка сохранения:', error);
+      alert('Произошла ошибка при сохранении товара');
     }
   };
 

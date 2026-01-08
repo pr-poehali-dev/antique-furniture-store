@@ -94,6 +94,20 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'body': json.dumps({'error': 'Все поля обязательны: article, name, price > 0'})
                 }
             
+            # Проверяем уникальность артикула
+            cur.execute("SELECT id, name FROM products_new WHERE article = %s", (article,))
+            existing = cur.fetchone()
+            
+            if existing:
+                return {
+                    'statusCode': 409,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({
+                        'error': f'Товар с артикулом "{article}" уже существует',
+                        'existing_product': {'id': existing['id'], 'name': existing['name']}
+                    }, ensure_ascii=False)
+                }
+            
             print(f"[POST] Вставка товара: article={article}, name={name}, price={price}, category={category}")
             
             cur.execute(
