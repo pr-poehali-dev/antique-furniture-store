@@ -404,6 +404,7 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
                 <SelectItem value="all">Все категории</SelectItem>
                 <SelectItem value="sets">Гарнитуры и комплекты</SelectItem>
                 <SelectItem value="storage">Комоды, сундуки, тумбы</SelectItem>
+                <SelectItem value="chairs">Кресла, стулья</SelectItem>
                 <SelectItem value="mirrors">Зеркала, ширмы</SelectItem>
                 <SelectItem value="tables">Столы, консоли</SelectItem>
               </SelectContent>
