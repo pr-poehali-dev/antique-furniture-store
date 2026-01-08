@@ -76,6 +76,9 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         elif method == 'POST':
             body_data = json.loads(event.get('body', '{}'))
             
+            # Логируем входные данные
+            print(f"[POST] Получены данные: {json.dumps(body_data, ensure_ascii=False)}")
+            
             photo_url: Optional[str] = body_data.get('photo_url')
             main_image: Optional[str] = body_data.get('main_image')
             article: str = body_data.get('article', '')
@@ -91,6 +94,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'body': json.dumps({'error': 'Все поля обязательны: article, name, price > 0'})
                 }
             
+            print(f"[POST] Вставка товара: article={article}, name={name}, price={price}, category={category}")
+            
             cur.execute(
                 "INSERT INTO products_new (photo_url, main_image, article, name, price, category, description) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id, photo_url, main_image, article, name, price, created_at, is_visible, category, description",
                 (photo_url, main_image, article, name, price, category, description)
@@ -98,6 +103,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             
             new_product = cur.fetchone()
             conn.commit()
+            
+            print(f"[POST] Товар успешно создан: id={new_product['id']}")
             
             return {
                 'statusCode': 201,
