@@ -59,7 +59,7 @@ const CatalogSection = ({
           </p>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-6 mb-12">
+        <div className="grid grid-cols-2 md:flex md:flex-wrap md:justify-center gap-4 md:gap-6 mb-12 max-w-screen-lg mx-auto">
           {categories.map((category) => {
             const categoryProduct = category.id === 'all' 
               ? products[0]
@@ -70,7 +70,7 @@ const CatalogSection = ({
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`relative overflow-hidden rounded-lg transition-all duration-300 h-32 w-48 group ${
+                className={`relative overflow-hidden rounded-lg transition-all duration-300 h-32 md:w-48 group ${
                   selectedCategory === category.id 
                     ? 'ring-4 ring-primary scale-105' 
                     : 'hover:scale-105 hover:shadow-xl'
