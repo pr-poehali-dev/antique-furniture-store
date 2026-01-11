@@ -59,18 +59,55 @@ const CatalogSection = ({
           </p>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-4 mb-12">
-          {categories.map((category) => (
-            <Button
-              key={category.id}
-              variant={selectedCategory === category.id ? 'default' : 'outline'}
-              onClick={() => setSelectedCategory(category.id)}
-              className="transition-all"
-            >
-              <Icon name={category.icon} className="mr-2" size={18} />
-              {category.name}
-            </Button>
-          ))}
+        <div className="flex flex-wrap justify-center gap-6 mb-12">
+          {categories.map((category) => {
+            const categoryProduct = category.id === 'all' 
+              ? products[0]
+              : products.find(p => p.category === category.id);
+            const backgroundImage = categoryProduct?.main_image || categoryProduct?.photo_url;
+
+            return (
+              <button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`relative overflow-hidden rounded-lg transition-all duration-300 h-32 w-48 group ${
+                  selectedCategory === category.id 
+                    ? 'ring-4 ring-primary scale-105' 
+                    : 'hover:scale-105 hover:shadow-xl'
+                }`}
+              >
+                {backgroundImage && (
+                  <div 
+                    className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                    style={{ backgroundImage: `url(${backgroundImage})` }}
+                  />
+                )}
+                <div className={`absolute inset-0 transition-all ${
+                  selectedCategory === category.id 
+                    ? 'bg-primary/80' 
+                    : 'bg-black/60 group-hover:bg-black/50'
+                }`} />
+                <div className="relative h-full flex flex-col items-center justify-center gap-2 px-4">
+                  <Icon 
+                    name={category.icon} 
+                    size={28} 
+                    className={`transition-colors ${
+                      selectedCategory === category.id 
+                        ? 'text-primary-foreground' 
+                        : 'text-white'
+                    }`}
+                  />
+                  <span className={`font-semibold text-center text-sm transition-colors ${
+                    selectedCategory === category.id 
+                      ? 'text-primary-foreground' 
+                      : 'text-white'
+                  }`}>
+                    {category.name}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
         </div>
 
         {loading ? (
