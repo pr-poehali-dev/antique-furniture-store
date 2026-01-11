@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import Icon from '@/components/ui/icon';
 
 interface Product {
@@ -46,6 +48,18 @@ const CatalogSection = ({
   setSelectedProduct,
   setIsDialogOpen
 }: CatalogSectionProps) => {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const searchFilteredProducts = filteredProducts.filter(product => {
+    const query = searchQuery.toLowerCase().trim();
+    if (!query) return true;
+    
+    const name = (product.name || product.title || '').toLowerCase();
+    const article = (product.article || '').toLowerCase();
+    
+    return name.includes(query) || article.includes(query);
+  });
+
   return (
     <section id="catalog" className="py-24 bg-background">
       <div className="container mx-auto px-6">
@@ -110,21 +124,48 @@ const CatalogSection = ({
           })}
         </div>
 
+        <div className="max-w-2xl mx-auto mb-12">
+          <div className="relative">
+            <Icon 
+              name="Search" 
+              size={20} 
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+            />
+            <Input
+              type="text"
+              placeholder="Поиск по названию или артикулу..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-12 pr-12 h-14 text-lg border-2 focus:border-primary"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Icon name="X" size={20} />
+              </button>
+            )}
+          </div>
+        </div>
+
         {loading ? (
           <div className="text-center py-12">
             <div className="text-xl text-muted-foreground">Загрузка товаров...</div>
           </div>
-        ) : filteredProducts.length === 0 ? (
+        ) : searchFilteredProducts.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-xl text-muted-foreground">
-              {products.length === 0 
-                ? 'Товары не найдены. Добавьте товары через админ-панель.' 
-                : 'Нет товаров в этой категории.'}
+              {searchQuery 
+                ? 'По вашему запросу ничего не найдено. Попробуйте изменить поисковый запрос.'
+                : products.length === 0 
+                  ? 'Товары не найдены. Добавьте товары через админ-панель.' 
+                  : 'Нет товаров в этой категории.'}
             </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProducts.map((product, index) => (
+            {searchFilteredProducts.map((product, index) => (
               <Card 
                 key={product.id} 
                 className="group overflow-hidden border-2 border-border hover:border-primary transition-all duration-300 hover:shadow-2xl animate-scale-in cursor-pointer flex flex-col"
