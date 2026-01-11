@@ -136,7 +136,7 @@ const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
               </div>
               {product.period && (
                 <div className="text-muted-foreground">
-                  Период: {product.period}
+                  Артикул: {product.period}
                 </div>
               )}
             </div>
