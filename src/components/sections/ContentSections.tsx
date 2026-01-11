@@ -53,7 +53,7 @@ const ContentSections = ({ scrollToSection }: ContentSectionsProps) => {
           <div className="grid md:grid-cols-2 gap-12 items-center animate-fade-in">
             <div className="rounded-lg overflow-hidden border-2 border-primary/20 h-[400px]">
               <iframe 
-                src="https://yandex.ru/map-widget/v1/?ll=37.640892%2C55.736893&z=17&l=map&pt=37.640892,55.736893,pm2rdm"
+                src="https://yandex.ru/map-widget/v1/?ll=37.637017%2C55.735158&z=17&l=map&pt=37.637017,55.735158,pm2rdm"
                 width="100%" 
                 height="100%" 
                 frameBorder="0"
@@ -84,7 +84,7 @@ const ContentSections = ({ scrollToSection }: ContentSectionsProps) => {
             <div className="space-y-6 mb-8">
               <div className="flex items-center justify-center gap-3">
                 <Icon name="MapPin" className="text-primary" size={24} />
-                <span className="text-lg">Москва, ул. Арбат, д. 15</span>
+                <span className="text-lg">Москва, ул. Садовническая, д. 61с1</span>
               </div>
               <div className="flex items-center justify-center gap-3">
                 <Icon name="Phone" className="text-primary" size={24} />
