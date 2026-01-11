@@ -101,8 +101,6 @@ const Index = () => {
       <main className="pt-[100px] md:pt-[180px]">
         <HeaderNewsCarousel />
 
-        <HeroSection scrollToSection={scrollToSection} />
-
         <CatalogSection 
           categories={categories}
           selectedCategory={selectedCategory}
