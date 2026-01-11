@@ -246,10 +246,7 @@ const CatalogSection = ({
         {showAllProducts && (
           <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-fade-in">
             <Button
-              onClick={() => {
-                setShowAllProducts(false);
-                document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' });
-              }}
+              onClick={() => setShowAllProducts(false)}
               variant="secondary"
               size="lg"
               className="bg-background/40 backdrop-blur-md border border-primary/30 hover:bg-background/60 shadow-lg text-foreground/70 hover:text-foreground"
