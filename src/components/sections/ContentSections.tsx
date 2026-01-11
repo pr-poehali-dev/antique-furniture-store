@@ -53,7 +53,7 @@ const ContentSections = ({ scrollToSection }: ContentSectionsProps) => {
           <div className="grid md:grid-cols-2 gap-12 items-center animate-fade-in">
             <div className="rounded-lg overflow-hidden border-2 border-primary/20 h-[400px]">
               <iframe 
-                src="https://yandex.ru/map-widget/v1/?ll=37.636340%2C55.734770&z=17&l=map&pt=37.636340,55.734770,pm2rdm"
+                src="https://yandex.ru/map-widget/v1/?ll=37.641926%2C55.738242&z=17&l=map&pt=37.641926,55.738242,pm2rdm"
                 width="100%" 
                 height="100%" 
                 frameBorder="0"
