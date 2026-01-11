@@ -86,24 +86,28 @@ const ContentSections = ({ scrollToSection }: ContentSectionsProps) => {
                 <Icon name="MapPin" className="text-primary" size={24} />
                 <span className="text-lg">Москва, ул. Садовническая, д. 61с1</span>
               </div>
-              <div className="flex items-center justify-center gap-3">
-                <Icon name="Phone" className="text-primary" size={24} />
-                <span className="text-lg">+7 (495) 123-45-67</span>
-              </div>
-              <div className="flex items-center justify-center gap-3">
-                <Icon name="Mail" className="text-primary" size={24} />
-                <span className="text-lg">info@chinoiserie.ru</span>
+              <div className="flex flex-col items-center gap-2">
+                <div className="flex items-center gap-3">
+                  <Icon name="Phone" className="text-primary" size={24} />
+                  <span className="text-lg">Катерина: +7 (926) 372-81-66</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Icon name="Phone" className="text-primary" size={24} />
+                  <span className="text-lg">Ольга: +7 (950) 627-47-79</span>
+                </div>
               </div>
               <div className="flex items-center justify-center gap-3">
                 <Icon name="Clock" className="text-primary" size={24} />
-                <span className="text-lg">Пн-Сб: 10:00 - 20:00, Вс: 11:00 - 18:00</span>
+                <span className="text-lg">По согласованию и предварительной договоренности</span>
               </div>
             </div>
 
-            <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              Связаться с нами
-              <Icon name="MessageCircle" className="ml-2" size={20} />
-            </Button>
+            <a href="https://t.me/olga6274779" target="_blank" rel="noopener noreferrer">
+              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                Связаться с нами
+                <Icon name="MessageCircle" className="ml-2" size={20} />
+              </Button>
+            </a>
           </div>
         </div>
       </section>
