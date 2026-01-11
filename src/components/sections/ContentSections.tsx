@@ -114,41 +114,22 @@ const ContentSections = ({ scrollToSection }: ContentSectionsProps) => {
 
       <footer className="bg-primary text-primary-foreground py-12">
         <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <img src="https://cdn.poehali.dev/files/abd9cfe2-f31a-443d-bc01-bea3c9be053a.png" alt="Архив № 8" className="h-12 w-12 object-contain" />
-              </div>
-              <p className="text-primary-foreground/80 font-body">
-                Вещи с историей
-              </p>
-            </div>
-            <div>
-              <h4 className="font-serif font-semibold mb-4">Навигация</h4>
-              <div className="space-y-2 text-primary-foreground/80">
-                <div className="cursor-pointer hover:text-primary-foreground transition-colors" onClick={() => scrollToSection('catalog')}>Каталог</div>
-                <div className="cursor-pointer hover:text-primary-foreground transition-colors" onClick={() => scrollToSection('about')}>О нас</div>
-                <div className="cursor-pointer hover:text-primary-foreground transition-colors" onClick={() => scrollToSection('contacts')}>Контакты</div>
+          <div className="flex flex-col items-center gap-8">
+            <div className="text-center">
+              <h4 className="font-serif font-semibold mb-4 text-xl">Следите за нами</h4>
+              <div className="flex gap-6 justify-center">
+                <a href="https://t.me/olga6274779" target="_blank" rel="noopener noreferrer" className="cursor-pointer hover:scale-110 transition-transform">
+                  <Icon name="Send" size={32} />
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer" className="cursor-pointer hover:scale-110 transition-transform">
+                  <Icon name="Image" size={32} />
+                </a>
               </div>
             </div>
-            <div>
-              <h4 className="font-serif font-semibold mb-4">Следите за нами</h4>
-              <div className="flex gap-4">
-                <div className="cursor-pointer hover:scale-110 transition-transform">
-                  <Icon name="Instagram" size={24} />
-                </div>
-                <div className="cursor-pointer hover:scale-110 transition-transform">
-                  <Icon name="Facebook" size={24} />
-                </div>
-                <div className="cursor-pointer hover:scale-110 transition-transform">
-                  <Icon name="Send" size={24} />
-                </div>
-              </div>
+            <Separator className="bg-primary-foreground/20 w-full" />
+            <div className="text-center text-primary-foreground font-body text-lg">
+              © 2025 Архив № 8. Все права защищены.
             </div>
-          </div>
-          <Separator className="bg-primary-foreground/20 mb-8" />
-          <div className="text-center text-primary-foreground/60 font-body">
-            © 2025 Архив № 8. Все права защищены.
           </div>
         </div>
       </footer>
