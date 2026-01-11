@@ -12,7 +12,7 @@ const ContentSections = ({ scrollToSection }: ContentSectionsProps) => {
     <>
       <section id="about" className="py-24 bg-muted/20">
         <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-12 items-center animate-fade-in">
+          <div className="grid md:grid-cols-2 gap-12 items-center animate-fade-in mb-16">
             <div>
               <div className="text-4xl mb-4">🎭</div>
               <h2 className="text-4xl font-serif font-bold text-primary mb-6">О нас</h2>
@@ -41,24 +41,32 @@ const ContentSections = ({ scrollToSection }: ContentSectionsProps) => {
                 </div>
               </div>
             </div>
-            <div className="space-y-6">
-              <div className="aspect-square rounded-lg overflow-hidden border-2 border-primary/20">
-                <img 
-                  src="https://cdn.poehali.dev/files/478a911a-d0b3-4dde-ba70-1be8f4dd3d6b.jpg" 
-                  alt="Интерьер салона Архив № 8" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="rounded-lg overflow-hidden border-2 border-primary/20 h-[400px]">
-                <iframe 
-                  src="https://yandex.ru/map-widget/v1/?ll=37.640892%2C55.736893&z=17&l=map&pt=37.640892,55.736893,pm2rdm"
-                  width="100%" 
-                  height="100%" 
-                  frameBorder="0"
-                  allowFullScreen
-                  style={{ position: 'relative' }}
-                />
-              </div>
+            <div className="aspect-square rounded-lg overflow-hidden border-2 border-primary/20">
+              <img 
+                src="https://cdn.poehali.dev/files/478a911a-d0b3-4dde-ba70-1be8f4dd3d6b.jpg" 
+                alt="Интерьер салона Архив № 8" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-12 items-center animate-fade-in">
+            <div className="rounded-lg overflow-hidden border-2 border-primary/20 h-[400px]">
+              <iframe 
+                src="https://yandex.ru/map-widget/v1/?ll=37.640892%2C55.736893&z=17&l=map&pt=37.640892,55.736893,pm2rdm"
+                width="100%" 
+                height="100%" 
+                frameBorder="0"
+                allowFullScreen
+                style={{ position: 'relative' }}
+              />
+            </div>
+            <div>
+              <div className="text-4xl mb-4">📍</div>
+              <h3 className="text-3xl font-serif font-bold text-primary mb-6">Посетите нас</h3>
+              <p className="text-lg text-muted-foreground font-body leading-relaxed">
+                Мы всегда рады вас встретить в нашем салоне по указанному адресу, где вы сможете увидеть и почувствовать наши предметы. (Визит по согласованию)
+              </p>
             </div>
           </div>
         </div>
