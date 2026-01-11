@@ -49,6 +49,7 @@ const CatalogSection = ({
   setIsDialogOpen
 }: CatalogSectionProps) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [showAllProducts, setShowAllProducts] = useState(false);
 
   const searchFilteredProducts = filteredProducts.filter(product => {
     const query = searchQuery.toLowerCase().trim();
@@ -59,6 +60,12 @@ const CatalogSection = ({
     
     return name.includes(query) || article.includes(query);
   });
+
+  const displayProducts = (selectedCategory === 'all' && !showAllProducts && !searchQuery)
+    ? searchFilteredProducts.slice(0, 12)
+    : searchFilteredProducts;
+
+  const hasMoreProducts = selectedCategory === 'all' && searchFilteredProducts.length > 12;
 
   return (
     <section id="catalog" className="py-24 bg-background">
@@ -165,7 +172,7 @@ const CatalogSection = ({
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {searchFilteredProducts.map((product, index) => (
+            {displayProducts.map((product, index) => (
               <Card 
                 key={product.id} 
                 className="group overflow-hidden border-2 border-border hover:border-primary transition-all duration-300 hover:shadow-2xl animate-scale-in cursor-pointer flex flex-col"
@@ -222,12 +229,36 @@ const CatalogSection = ({
           </div>
         )}
 
-        <div className="text-center mt-12">
-          <Button variant="outline" size="lg" className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all">
-            Весь каталог
-            <Icon name="Grid" className="ml-2" size={20} />
-          </Button>
-        </div>
+        {hasMoreProducts && !showAllProducts && (
+          <div className="text-center mt-12">
+            <Button 
+              onClick={() => setShowAllProducts(true)}
+              variant="outline" 
+              size="lg" 
+              className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all"
+            >
+              Весь каталог
+              <Icon name="Grid" className="ml-2" size={20} />
+            </Button>
+          </div>
+        )}
+
+        {showAllProducts && (
+          <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-fade-in">
+            <Button
+              onClick={() => {
+                setShowAllProducts(false);
+                document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              variant="secondary"
+              size="lg"
+              className="bg-background/80 backdrop-blur-md border-2 border-primary hover:bg-background shadow-2xl"
+            >
+              <Icon name="ChevronUp" className="mr-2" size={20} />
+              Свернуть каталог
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   );
