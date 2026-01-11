@@ -62,13 +62,6 @@ const Header = ({ activeSection, isMobileMenuOpen, setIsMobileMenuOpen, scrollTo
               </button>
               <div className="h-8 w-px bg-gradient-to-b from-transparent via-primary to-transparent"></div>
               <button
-                onClick={() => scrollToSection('services')}
-                className={`text-[22px] px-5 py-2 rounded transition-all duration-300 hover:scale-110 border border-transparent hover:border-primary ${activeSection === 'services' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
-              >
-                Услуги
-              </button>
-              <div className="h-8 w-px bg-gradient-to-b from-transparent via-primary to-transparent"></div>
-              <button
                 onClick={() => scrollToSection('contacts')}
                 className={`text-[22px] px-5 py-2 rounded transition-all duration-300 hover:scale-110 border border-transparent hover:border-primary ${activeSection === 'contacts' ? 'text-primary font-semibold' : 'text-foreground hover:text-primary'}`}
               >
@@ -100,13 +93,6 @@ const Header = ({ activeSection, isMobileMenuOpen, setIsMobileMenuOpen, scrollTo
                 className={`text-lg px-4 py-3 rounded text-left transition-all duration-300 hover:bg-primary/10 ${activeSection === 'about' ? 'text-primary font-semibold border border-primary' : 'text-foreground'}`}
               >
                 О нас
-              </button>
-              <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/60 to-transparent"></div>
-              <button
-                onClick={() => scrollToSection('services')}
-                className={`text-lg px-4 py-3 rounded text-left transition-all duration-300 hover:bg-primary/10 ${activeSection === 'services' ? 'text-primary font-semibold border border-primary' : 'text-foreground'}`}
-              >
-                Услуги
               </button>
               <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/60 to-transparent"></div>
               <button

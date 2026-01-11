@@ -64,51 +64,7 @@ const ContentSections = ({ scrollToSection }: ContentSectionsProps) => {
         </div>
       </section>
 
-      <section id="services" className="py-24 bg-background">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16 animate-fade-in">
-            <div className="text-4xl mb-4">🚚</div>
-            <h2 className="text-4xl font-serif font-bold text-primary mb-4">Доставка и оплата</h2>
-            <p className="text-lg text-muted-foreground font-body max-w-2xl mx-auto">
-              Удобные условия покупки и доставки антикварной мебели
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="border-2 border-border hover:border-primary transition-all hover:shadow-xl">
-              <CardContent className="p-8 text-center">
-                <div className="text-5xl mb-4">🛒</div>
-                <h3 className="text-2xl font-serif font-semibold mb-4 text-foreground">Оформление</h3>
-                <p className="text-muted-foreground font-body">
-                  Простое оформление заказа онлайн или в нашем салоне
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 border-border hover:border-primary transition-all hover:shadow-xl">
-              <CardContent className="p-8 text-center">
-                <div className="text-5xl mb-4">💳</div>
-                <h3 className="text-2xl font-serif font-semibold mb-4 text-foreground">Оплата</h3>
-                <p className="text-muted-foreground font-body">
-                  Наличный и безналичный расчет, оплата картой
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 border-border hover:border-primary transition-all hover:shadow-xl">
-              <CardContent className="p-8 text-center">
-                <div className="text-5xl mb-4">🚛</div>
-                <h3 className="text-2xl font-serif font-semibold mb-4 text-foreground">Доставка</h3>
-                <p className="text-muted-foreground font-body">
-                  Бережная доставка по Москве и России
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      <section id="contacts" className="py-24 bg-muted/20">
+      <section id="contacts" className="py-24 bg-background">
         <div className="container mx-auto px-6">
           <div className="max-w-2xl mx-auto text-center animate-fade-in">
             <div className="text-4xl mb-4">📞</div>
@@ -160,7 +116,7 @@ const ContentSections = ({ scrollToSection }: ContentSectionsProps) => {
               <div className="space-y-2 text-primary-foreground/80">
                 <div className="cursor-pointer hover:text-primary-foreground transition-colors" onClick={() => scrollToSection('catalog')}>Каталог</div>
                 <div className="cursor-pointer hover:text-primary-foreground transition-colors" onClick={() => scrollToSection('about')}>О нас</div>
-                <div className="cursor-pointer hover:text-primary-foreground transition-colors" onClick={() => scrollToSection('services')}>Услуги</div>
+                <div className="cursor-pointer hover:text-primary-foreground transition-colors" onClick={() => scrollToSection('contacts')}>Контакты</div>
               </div>
             </div>
             <div>
