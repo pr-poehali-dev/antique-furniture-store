@@ -333,6 +333,7 @@ const Admin = () => {
             <ProductForm
               formData={formData}
               editingId={editingId}
+              categories={categories}
               onSubmit={handleSubmit}
               onCancel={handleCancel}
               onFormDataChange={setFormData}

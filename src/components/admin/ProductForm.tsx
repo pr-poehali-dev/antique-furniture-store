@@ -17,15 +17,22 @@ interface ProductFormData {
   description?: string;
 }
 
+interface Category {
+  id: string;
+  name: string;
+  icon: string;
+}
+
 interface ProductFormProps {
   formData: ProductFormData;
   editingId: number | null;
+  categories: Category[];
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
   onFormDataChange: (data: ProductFormData) => void;
 }
 
-const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange }: ProductFormProps) => {
+const ProductForm = ({ formData, editingId, categories, onSubmit, onCancel, onFormDataChange }: ProductFormProps) => {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingMainImage, setUploadingMainImage] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -401,12 +408,11 @@ const ProductForm = ({ formData, editingId, onSubmit, onCancel, onFormDataChange
                 <SelectValue placeholder="Выберите категорию" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Все категории</SelectItem>
-                <SelectItem value="sets">Гарнитуры и комплекты</SelectItem>
-                <SelectItem value="storage">Комоды, сундуки, тумбы</SelectItem>
-                <SelectItem value="chairs">Кресла, стулья</SelectItem>
-                <SelectItem value="mirrors">Зеркала, ширмы</SelectItem>
-                <SelectItem value="tables">Столы, консоли</SelectItem>
+                {categories.map((cat) => (
+                  <SelectItem key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
