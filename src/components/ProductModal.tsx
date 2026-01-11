@@ -150,10 +150,17 @@ const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
               </div>
             )}
 
-            <Button className="mt-auto" size="lg">
-              <Icon name="MessageCircle" className="mr-2" size={20} />
-              Связаться с нами
-            </Button>
+            <a 
+              href={`https://t.me/olga6274779?text=${encodeURIComponent(`Меня интересует данный товар (${product.title || product.name} - Артикул: ${product.period})`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-auto"
+            >
+              <Button className="w-full" size="lg">
+                <Icon name="MessageCircle" className="mr-2" size={20} />
+                Связаться с нами
+              </Button>
+            </a>
           </div>
         </div>
       </DialogContent>
