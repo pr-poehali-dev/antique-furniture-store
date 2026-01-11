@@ -252,7 +252,7 @@ const CatalogSection = ({
               }}
               variant="secondary"
               size="lg"
-              className="bg-background/80 backdrop-blur-md border-2 border-primary hover:bg-background shadow-2xl"
+              className="bg-background/40 backdrop-blur-md border border-primary/30 hover:bg-background/60 shadow-lg text-foreground/70 hover:text-foreground"
             >
               <Icon name="ChevronUp" className="mr-2" size={20} />
               Свернуть каталог
