@@ -90,14 +90,14 @@ const CatalogSection = ({
             {filteredProducts.map((product, index) => (
               <Card 
                 key={product.id} 
-                className="group overflow-hidden border-2 border-border hover:border-primary transition-all duration-300 hover:shadow-2xl animate-scale-in cursor-pointer"
+                className="group overflow-hidden border-2 border-border hover:border-primary transition-all duration-300 hover:shadow-2xl animate-scale-in cursor-pointer flex flex-col"
                 style={{ animationDelay: `${index * 150}ms` }}
                 onClick={() => {
                   setSelectedProduct(product);
                   setIsDialogOpen(true);
                 }}
               >
-                <CardContent className="p-0">
+                <CardContent className="p-0 flex flex-col flex-1">
                   <div className="relative overflow-hidden bg-muted h-96 flex items-center justify-center">
                     {(product.main_image || product.photo_url) ? (
                       <img
@@ -117,7 +117,7 @@ const CatalogSection = ({
                       {product.article}
                     </div>
                   </div>
-                  <div className="p-6">
+                  <div className="p-6 flex flex-col flex-1">
                     <h3 className="text-2xl font-serif font-semibold text-foreground mb-3">
                       {product.name}
                     </h3>
@@ -127,7 +127,7 @@ const CatalogSection = ({
                       </span>
                     </div>
                     <Button 
-                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground transition-all"
+                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground transition-all mt-auto"
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedProduct(product);
