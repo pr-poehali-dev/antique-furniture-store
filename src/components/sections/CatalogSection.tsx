@@ -105,7 +105,7 @@ const CatalogSection = ({
                 )}
                 <div className={`absolute inset-0 transition-all ${
                   selectedCategory === category.id 
-                    ? 'bg-primary/80' 
+                    ? 'bg-black/40' 
                     : 'bg-black/60 group-hover:bg-black/50'
                 }`} />
                 <div className="relative h-full flex flex-col items-center justify-center gap-2 px-4">
