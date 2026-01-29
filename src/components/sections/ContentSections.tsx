@@ -102,7 +102,7 @@ const ContentSections = ({ scrollToSection }: ContentSectionsProps) => {
               </div>
             </div>
 
-            <a href="https://t.me/olga6274779" target="_blank" rel="noopener noreferrer">
+            <a href="https://t.me/@archive8manager" target="_blank" rel="noopener noreferrer">
               <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
                 Связаться с нами
                 <Icon name="MessageCircle" className="ml-2" size={20} />
@@ -118,7 +118,7 @@ const ContentSections = ({ scrollToSection }: ContentSectionsProps) => {
             <div className="text-center">
               <h4 className="font-serif font-semibold mb-4 text-xl">Следите за нами</h4>
               <div className="flex gap-6 justify-center">
-                <a href="https://t.me/olga6274779" target="_blank" rel="noopener noreferrer" className="cursor-pointer hover:scale-110 transition-transform">
+                <a href="https://t.me/@archive8manager" target="_blank" rel="noopener noreferrer" className="cursor-pointer hover:scale-110 transition-transform">
                   <Icon name="Send" size={32} />
                 </a>
                 <a href="https://pin.it/59ES10Xqo" target="_blank" rel="noopener noreferrer" className="cursor-pointer hover:scale-110 transition-transform">

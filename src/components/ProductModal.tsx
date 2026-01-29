@@ -151,7 +151,7 @@ const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
             )}
 
             <a 
-              href={`https://t.me/olga6274779?text=${encodeURIComponent(`Меня интересует данный товар (${product.title || product.name} - Артикул: ${product.period})`)}`}
+              href={`https://t.me/@archive8manager?text=${encodeURIComponent(`Меня интересует данный товар (${product.title || product.name} - Артикул: ${product.period})`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-auto"
