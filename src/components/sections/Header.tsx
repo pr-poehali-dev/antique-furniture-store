@@ -27,7 +27,7 @@ const Header = ({ activeSection, isMobileMenuOpen, setIsMobileMenuOpen, scrollTo
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 md:gap-4">
               <img src="https://cdn.poehali.dev/files/abd9cfe2-f31a-443d-bc01-bea3c9be053a.png" alt="Архив № 8" className="h-20 w-20 md:h-40 md:w-40 object-contain" />
-              <h1 className="text-lg md:text-3xl font-bold bg-gradient-to-br from-primary via-amber-400 to-primary bg-clip-text text-transparent animate-shimmer uppercase" style={{ fontFamily: 'Cardo, serif', textShadow: '0 0 20px rgba(217, 178, 95, 0.5), 0 0 40px rgba(217, 178, 95, 0.3)' }}>
+              <h1 className="text-2xl md:text-5xl font-bold bg-gradient-to-br from-primary/80 via-amber-300/70 to-primary/80 bg-clip-text text-transparent animate-shimmer uppercase tracking-wider md:tracking-widest" style={{ fontFamily: 'Cardo, serif', textShadow: '0 0 15px rgba(217, 178, 95, 0.3), 0 0 30px rgba(217, 178, 95, 0.2)' }}>
                 Архив №8
               </h1>
             </div>
