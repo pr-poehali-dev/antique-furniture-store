@@ -54,6 +54,13 @@ const CatalogSection = ({
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategory(categoryId);
     setShowAllProducts(false);
+    
+    setTimeout(() => {
+      const productsGrid = document.getElementById('products-grid');
+      if (productsGrid) {
+        productsGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
   };
 
   const searchFilteredProducts = filteredProducts.filter(product => {
@@ -176,7 +183,7 @@ const CatalogSection = ({
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div id="products-grid" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {displayProducts.map((product, index) => (
               <Card 
                 key={product.id} 
