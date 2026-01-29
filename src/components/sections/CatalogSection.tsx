@@ -51,6 +51,11 @@ const CatalogSection = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [showAllProducts, setShowAllProducts] = useState(false);
 
+  const handleCategoryChange = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+    setShowAllProducts(false);
+  };
+
   const searchFilteredProducts = filteredProducts.filter(product => {
     const query = searchQuery.toLowerCase().trim();
     if (!query) return true;
@@ -90,7 +95,7 @@ const CatalogSection = ({
             return (
               <button
                 key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
+                onClick={() => handleCategoryChange(category.id)}
                 className={`relative overflow-hidden rounded-lg transition-all duration-300 h-32 md:w-48 group ${
                   selectedCategory === category.id 
                     ? 'ring-4 ring-primary scale-105' 
