@@ -84,8 +84,8 @@ const CatalogSection = ({
       <div className="container mx-auto px-6">
         <div className="text-center mb-16 animate-fade-in">
           <div className="text-4xl mb-4">✨</div>
-          <h2 className="text-4xl md:text-5xl font-serif font-bold text-primary mb-4">
-            Каталог антиквариата
+          <h2 className="text-4xl md:text-6xl font-bold bg-gradient-to-br from-primary/80 via-amber-300/70 to-primary/80 bg-clip-text text-transparent uppercase tracking-wider md:tracking-widest mb-4" style={{ fontFamily: 'Cardo, serif', textShadow: '0 0 15px rgba(217, 178, 95, 0.3), 0 0 30px rgba(217, 178, 95, 0.2)' }}>
+            Каталог
           </h2>
           <p className="text-lg text-muted-foreground font-body max-w-2xl mx-auto">
             Каждый предмет в нашей коллекции — это уникальное произведение искусства
